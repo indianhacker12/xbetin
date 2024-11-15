@@ -1,0 +1,223 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+/* Header */
+.header {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Banner Message */
+.banner {
+    background-color: #ffeeee;
+    color: #ff4d4d;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    border-bottom: 1px solid #ffdddd;
+    animation: bannerPulse 2s infinite;
+}
+
+/* Pulsing Banner Animation */
+@keyframes bannerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    padding: 8px 12px;
+    color: #555;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.tab.active {
+    color: #ff4d4d;
+    border-bottom: 2px solid #ff4d4d;
+}
+
+.tab:hover {
+    color: #ff8080;
+}
+
+/* Timer Section */
+.timer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffdddd;
+    color: #ff4d4d;
+    padding: 15px;
+    font-size: 18px;
+}
+
+/* Bet Options */
+.bet-options, .big-small-options {
+    display: flex;
+    justify-content: space-around;
+    padding:20px;
+}
+
+.option {
+    background-color: #bc0707;
+    color: #fffdfd;
+    padding: 10px;
+    width: 60px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+.option .number-options {
+    background-color: #000000;
+    color: #fffdfd;
+    padding: 10px;
+    width: 60px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+
+/* Color options */
+.option.red { background-color: #ae0303; color: #fceeee;width: 100px; }
+.option.red:hover{ background-color: #e22929; color: #fceeee; }
+.option.green { background-color: #0bdf0b; color: #fefefe; width: 100px; }
+.option.green:hover{ background-color: #30a730; color: #fefefe; }
+.option.violet { background-color: #8e36e7; color: #fcfcfc;width: 100px; }
+.option.violet:hover{ background-color: #740eda; color: #fcfcfc; }
+.option.blue { background-color: #3580ca; color: #f5f5f5; width: 150px; }
+.option.blue:hover{ background-color: #5ca9f6; color: #f5f5f5; }
+.option.yellow { background-color: #d0bc06; color: #fafafa; width: 150px; }
+.option.yellow:hover { 
+    background-color: #fbe30a;
+    color: #fafafa;
+    
+
+}
+
+/* Option Hover Effect */
+.option:hover {
+    transform: translateY(-5px);
+   
+}
+
+/* Number Options */
+.number-options {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    padding: 10px;
+    justify-items: center;
+}
+
+/* Game History Tabs */
+.game-history {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f2f2f2;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    font-size: 9px;
+    color: #555;
+    
+}
+
+/* Balance and Deposit Section */
+.balance {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px;
+    background-color: #f9f9f9;
+    font-size: 18px;
+    border-top: 1px solid #ddd;
+    background-color: #394b39;
+}
+
+.balance span {
+    font-weight: bold;
+    color: #3d0000;
+  
+    padding: 5px;
+    border-radius: 10px;
+} 
+
+.balance button {
+    padding: 8px 20px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.balance button:hover {
+    background-color: #ff6666;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .container {
+        width: 95%;
+    }
+    .option, .tab {
+        font-size: 12px;
+    }
+}
+
+
+#win_dialog {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}

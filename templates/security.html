@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - Betting Website</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #c1a5a5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+ 
+        header h1 {
+            font-size: 2.5rem;
+            color: #1e3c72;
+            text-align: center;
+        }
+
+        section{
+            border: 2px solid black;
+            padding: 10px;
+            margin: 10px;
+            background-color: rgba(0, 255, 255, 0.41);
+            border-radius: 20px;
+
+        }
+
+        h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            background-color: #1e3c72;
+            color: #ffffff;
+            padding: 20px;
+        }
+    </style>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+</head>
+<body>
+
+
+    <header>
+        <h1>Security</h1>
+    </header>
+
+    <section>
+        <h2>Our Commitment to Security</h2>
+        <p>We are committed to protecting the security of your personal and financial information. Our website employs the latest technologies and security measures to ensure that your data is kept safe at all times.</p>
+
+        <h2>Encryption</h2>
+        <p>All sensitive data, such as payment information and passwords, is encrypted using SSL (Secure Sockets Layer) technology. This ensures that your data cannot be intercepted by malicious parties during transmission.</p>
+
+        <h2>Account Security</h2>
+        <p>We recommend that you use a strong, unique password for your account. We also use multi-factor authentication (MFA) to provide an extra layer of security when logging into your account.</p>
+
+        <h2>Fraud Prevention</h2>
+        <p>Our platform actively monitors for any suspicious activity. If we detect any unusual behavior, we may temporarily suspend your account and contact you to verify your identity.</p>
+
+        <h2>Regular Security Audits</h2>
+        <p>We perform regular security audits and updates to ensure our systems are protected from the latest threats. Our development team is continually improving security features and staying up-to-date with best practices.</p>
+
+        <p>If you have any security concerns, please <a href="{{ url_for('contact') }}">contact us</a> immediately, and we will investigate the issue.</p>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <p>
+                <a href="/terms">Terms and Conditions</a> | 
+                <a href="/privacy">Privacy Policy</a> | 
+                <a href="/security">Security</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

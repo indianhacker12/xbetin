@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exclusive Promotions</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <style>
+        /* Base styles */
+        body {
+            background-color: #fdf6e3;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Container */
+        .promotion-container {
+            background-color: #f11616c8;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        /* Header styles */
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #3b0909;
+        }
+
+        h2 {
+            
+            text-align: center;
+            font-size: 1.8em;
+            color: #008cff;
+        }
+
+        /* Form and button styles */
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            border: 2px solid #0f8cf3;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #0b84e7;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f14101;
+        }
+
+        /* Promotion items */
+        .promotions-list {
+            margin-top: 20px;
+        }
+
+        .promotion-item {
+            background-color: #ffebcd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .promotion-item:hover {
+            transform: translateY(-5px);
+        }
+
+        h3 {
+            color: #ff7f50;
+            font-size: 1.6em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Back link */
+        .back-to-account {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1.1em;
+            color: #4682b4;
+            border: 2px solid #4682b4;
+            padding: 10px 20px;
+            background-color: plum;
+            border-radius: 25px;
+            border: 2px blue;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .back-to-account:hover {
+            background-color: #4682b4;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .promotion-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            input[type="text"] {
+                width: 90%;
+            }
+
+            button {
+                padding: 8px 15px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="promotion-container">
+        <h1>Exclusive Promotions</h1>
+        <h2>Redeem Your Code</h2>
+        <form method="POST">
+            <input type="text" name="promo_code" placeholder="Enter your promo code" required>
+            <button type="submit">Redeem</button>
+        </form>
+
+        <div class="promotions-list">
+            <div class="promotion-item">
+                <h3>Welcome Bonus</h3>
+                <p>Enjoy a 100% bonus on your first deposit and start your journey with us!</p>
+            </div>
+            <div class="promotion-item">
+                <h3>Weekly Cashback</h3>
+                <p>Get up to 10% cashback on your weekly losses. Play worry-free!</p>
+            </div>
+            <div class="promotion-item">
+                <h3>Referral Bonus</h3>
+                <p>Invite your friends and earn ₹100 for each successful referral. Spread the love!</p>
+            </div>
+        </div>
+
+        <a href="{{ url_for('account') }}" class="back-to-account">Back to Account</a>
+    </div>
+</body>
+</html>

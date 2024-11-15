@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Betting Website</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #40bddd;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Vertical Fixed Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 150px;
+            height: 100vh;
+            background-color: #1e3c72;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 20px 0;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #ffcc00;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            text-align: center;
+        }
+
+        nav ul li a:hover {
+            color: #ffffff;
+            background-color: #ff9933;
+            border-radius: 10px;
+        }
+
+        
+
+        /* Main Container */
+        .container {           
+            margin-left: 150px;
+            padding: 0px;
+            flex: 1;
+            background-color: #161636;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-header h2 {
+            color: #0d75dd;
+        }
+
+        .profile-header img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 3px solid #1e3c72;
+        }
+
+        .wallet-section h4 {
+            background-color: hsla(0, 14%, 1%, 0.636);
+            border: 1px solid #101111;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 100%;
+            color: white;
+        }
+
+        
+        .btn {
+            background-color: #ff9933;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #e68a00;
+        }
+
+ /* Footer */
+        footer {
+            background-color: #1e3c72;
+            color: #ffffff;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+            margin-left: 145px;
+        }
+
+        footer p {
+            margin-bottom: 0px;
+            padding-bottom: 20px;
+           
+            
+
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar (Vertical) -->
+    <nav>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/promo">Gift</a></li>
+            <li><a href="/account">Account</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/wallet">Wallet</a></li>
+            <li><a href="/game-history">Game History</a></li>
+        </ul>
+    </nav>
+
+    <!-- Profile Container -->
+    <div class="container">
+        <div class="profile-header">
+            <img src="/static/img/user.png" alt="User Image"> <!-- User image placeholder -->
+            <h2>Profile</h2>
+            <p>User ID: {{ user.id }}</p>
+        </div>
+
+        <div class="wallet-section">
+            <h4>Wallet Balance: ₹{{ user.wallet_balance }}</h4>
+            <!-- <a href="{{ url_for('wallet') }}" class="btn">Deposit</a>
+            <a href="{{ url_for('wallet') }}" class="btn">Withdraw</a>
+            <a href="{{ url_for('promotions') }}" class="btn">Gift</a> -->
+            <!-- <a href="{{ url_for('game_history') }}" class="btn">Game History</a> -->
+        </div>
+
+    </div>
+
+ 
+    <footer>
+        <div class="footer-links">
+            <p>
+                <a href="/terms">Terms and Conditions</a> | 
+                <a href="/privacy">Privacy Policy</a> | 
+                <a href="/security">Security</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

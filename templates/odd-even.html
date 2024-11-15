@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Odd-Even Prediction Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .game-container {
+            width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .wallet, .bet-section, .options, .history, .leaderboard, .timer, .auto-rebuy {
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .odd { background-color: #3498db; }
+        .even { background-color: #2ecc71; }
+        .history table, .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .history th, .history td, .leaderboard th, .leaderboard td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .result-message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h2>Advanced Odd-Even Prediction Game</h2>
+        
+        <div class="wallet">
+            <strong>Wallet Balance: $<span id="wallet-balance">1000</span></strong>
+        </div>
+
+        <div class="bet-section">
+            <label for="bet-amount">Bet Amount: $</label>
+            <input type="number" id="bet-amount" value="10" min="1">
+        </div>
+
+        <div class="options">
+            <button class="button odd" onclick="placeBet('Odd')">Bet Odd (<span id="odd-odds">1.9</span>x)</button>
+            <button class="button even" onclick="placeBet('Even')">Bet Even (<span id="even-odds">1.8</span>x)</button>
+        </div>
+
+        <div class="timer">
+            Time remaining: <span id="timer">30</span>s
+        </div>
+
+        <div id="result-message" class="result-message"></div>
+
+        <div class="auto-rebuy">
+            <label for="auto-rebuy-rounds">Auto-Rebuy Rounds:</label>
+            <input type="number" id="auto-rebuy-rounds" value="0" min="0">
+        </div>
+
+        <div class="history">
+            <h3>Game History</h3>
+            <button onclick="filterHistory('all')">All</button>
+            <button onclick="filterHistory('win')">Wins</button>
+            <button onclick="filterHistory('lose')">Losses</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Game ID</th>
+                        <th>Bet</th>
+                        <th>Amount</th>
+                        <th>Outcome</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="history">
+                    <!-- Game history rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="leaderboard">
+            <h3>Leaderboard</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard">
+                    <!-- Leaderboard rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let walletBalance = 1000;
+        let gameId = 1;
+        let timer = 30;
+        let intervalId;
+        let bets = [];
+        let autoRebuyRounds = 0;
+        const leaderboard = [{ name: "Player 1", balance: 1000 }, { name: "Player 2", balance: 1200 }];
+        const winSound = new Audio('win.mp3');
+        const loseSound = new Audio('lose.mp3');
+        document.getElementById('wallet-balance').textContent = walletBalance;
+
+        function startTimer() {
+            timer = 30;
+            intervalId = setInterval(() => {
+                timer--;
+                document.getElementById("timer").textContent = timer;
+                if (timer === 0) {
+                    clearInterval(intervalId);
+                    endRound();
+                }
+            }, 1000);
+        }
+
+        function placeBet(choice) {
+            const betAmount = parseFloat(document.getElementById('bet-amount').value);
+
+            if (timer <= 0) {
+                alert("Round has ended! Wait for the next round.");
+                return;
+            }
+
+            if (isNaN(betAmount) || betAmount <= 0 || betAmount > walletBalance) {
+                alert("Invalid bet amount.");
+                return;
+            }
+
+            walletBalance -= betAmount;
+            bets.push({ choice, amount: betAmount });
+            document.getElementById('wallet-balance').textContent = walletBalance;
+            document.getElementById('result-message').textContent = `Bet placed on ${choice} for $${betAmount}`;
+        }
+
+        function endRound() {
+            const randomNumber = Math.floor(Math.random() * 100) + 1;
+            const result = randomNumber % 2 === 0 ? 'Even' : 'Odd';
+            let resultMessage = `The number was ${randomNumber} (${result}). `;
+            let totalPayout = 0;
+            
+            bets.forEach((bet) => {
+                let outcome = "Lose";
+                if (bet.choice === result) {
+                    const odds = result === 'Odd' ? parseFloat(document.getElementById("odd-odds").textContent) : parseFloat(document.getElementById("even-odds").textContent);
+                    const winnings = bet.amount * odds;
+                    walletBalance += winnings;
+                    outcome = "Win";
+                    totalPayout += winnings;
+                    resultMessage += `You won $${winnings.toFixed(2)} for ${bet.choice}! `;
+                    winSound.play();
+                } else {
+                    resultMessage += `You lost $${bet.amount} for ${bet.choice}. `;
+                    loseSound.play();
+                }
+                addToHistory(gameId, bet.choice, bet.amount, outcome, new Date().toLocaleTimeString());
+            });
+
+            document.getElementById('wallet-balance').textContent = walletBalance;
+            document.getElementById('result-message').textContent = resultMessage;
+
+            // Restart round after result summary
+            setTimeout(() => {
+                bets = [];
+                gameId++;
+                adjustOdds();
+                document.getElementById('result-message').textContent = '';
+                startTimer();
+            }, 5000);
+        }
+
+        function addToHistory(gameId, choice, amount, outcome, time) {
+            const historyTable = document.getElementById('history');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${gameId}</td>
+                <td>${choice}</td>
+                <td>$${amount}</td>
+                <td>${outcome}</td>
+                <td>${time}</td>
+            `;
+            row.className = outcome === "Win" ? "win" : "lose";
+            historyTable.appendChild(row);
+        }
+
+        function adjustOdds() {
+            const oddOdds = 1.8 + Math.random() * 0.2;
+            const evenOdds = 1.7 + Math.random() * 0.2;
+            document.getElementById("odd-odds").textContent = oddOdds.toFixed(2);
+            document.getElementById("even-odds").textContent = evenOdds.toFixed(2);
+        }
+
+        function filterHistory(type) {
+            const rows = document.querySelectorAll("#history tr");
+            rows.forEach(row => {
+                if (type === 'all' || row.classList.contains(type)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Start the game timer on page load
+        startTimer();
+    </script>
+</body>
+</html>

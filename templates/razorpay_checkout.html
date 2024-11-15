@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Checkout</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h1>Processing Payment...</h1>
+    <script>
+        var options = {
+            "key": "{{rzp_test_F5kCBn94wVKIms}}",  // Your Razorpay API Key
+            "amount": "{{ amount * 100 }}",  // Amount is in paisa
+            "currency": "INR",
+            "name": "Betting Website",
+            "description": "Wallet Deposit",
+            "order_id": "{{ order_id }}",  // Order ID from Razorpay
+            "handler": function (response) {
+                // Redirect to payment success route with payment details
+                window.location.href = "/payment_success?razorpay_payment_id=" + response.razorpay_payment_id + "&razorpay_order_id=" + response.razorpay_order_id + "&amount={{ amount }}";
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    </script>
+</body>
+</html>

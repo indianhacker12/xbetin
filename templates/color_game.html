@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Game Betting Interface</title>
+    <link rel="stylesheet" href="/static/css/color_game.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">XBet</div>
+        <div class="banner">Full range of services! Welcome to join~</div>
+        
+        <div class="tabs">
+            <div class="tab active">Win Go 30S</div>
+            <div class="tab">Win Go 1Min</div>
+            <div class="tab">Win Go 5Min</div>
+            <div class="tab">Win Go 10Min</div>
+        </div>
+        
+        <div class="timer">
+            <div>2411132259</div>
+            <div>Time remaining: <strong id="timer">30</strong>s</div>
+        </div>
+
+        <!-- Bet Options -->
+        <div class="bet-options">
+            <div class="option red" onclick="placeBet('Color', 'Red', 1.97)">Red<br>1.97</div>
+            <div class="option green" onclick="placeBet('Color', 'Green', 1.97)">Green<br>1.97</div>
+            <div class="option violet" onclick="placeBet('Color', 'Violet', 4.5)">Violet<br>4.5</div>
+        </div>
+        <div class="number-options">
+            <div class="option" onclick="placeBet('Number', '0', 9)">0</div>
+            <div class="option" onclick="placeBet('Number', '1', 9)">1</div>
+            <div class="option" onclick="placeBet('Number', '2', 9)">2</div>
+            <div class="option" onclick="placeBet('Number', '3', 9)">3</div>
+            <div class="option" onclick="placeBet('Number', '4', 9)">4</div>
+            <div class="option" onclick="placeBet('Number', '5', 9)">5</div>
+            <div class="option" onclick="placeBet('Number', '6', 9)">6</div>
+            <div class="option" onclick="placeBet('Number', '7', 9)">7</div>
+            <div class="option" onclick="placeBet('Number', '8', 9)">8</div>
+            <div class="option" onclick="placeBet('Number', '9', 9)">9</div>
+        </div>
+        <div class="big-small-options">
+            <div class="option blue" onclick="placeBet('BigSmall', 'Big', 1.97)">Big 1.97</div>
+            <div class="option yellow" onclick="placeBet('BigSmall', 'Small', 1.97)">Small 1.97</div>
+        </div>
+
+        <!-- Input Bet Amount -->
+        <div class="bet-amount">
+            <label for="betAmount">Enter Bet Amount: </label>
+            <input type="number" id="betAmount" min="1" step="0.01" placeholder="5.00" style="padding: 5px; border-radius: 10px; border: 2px solid salmon;">
+            <button onclick="confirmBet()" style="background-color: aqua; padding: 10px; border-radius: 10px;">Place Bet</button>
+        </div>
+
+        <!-- Result History Sections -->
+        <div class="game-history">
+            <h3>Color</h3> <br>
+            <ul id="color-history"></ul>
+            <h3>Number</h3> <br>
+            <ul id="number-history"></ul>
+            <h3>Big/Small</h3> <br>
+            <ul id="bigsmall-history"></ul>
+        </div>
+
+        <div class="balance">
+            <span>Balance: <span id="balance">500.00</span></span>
+            <button onclick="deposit()">Deposit</button>
+        </div>
+    </div>
+
+    <script>
+        let balance = 500.00;
+        let countdown = 30;
+        let timerInterval;
+        let bets = []; // Array to store multiple bets
+
+        // Start countdown timer
+        function startTimer() {
+            countdown = 30;
+            document.getElementById("timer").innerText = countdown;
+            timerInterval = setInterval(() => {
+                countdown--;
+                document.getElementById("timer").innerText = countdown;
+                if (countdown === 5) disableBetting();
+                if (countdown <= 0) {
+                    clearInterval(timerInterval);
+                    evaluateBets();
+                    resetGame();
+                }
+            }, 1000);
+        }
+
+        // Place a bet selection
+        function placeBet(game, option, multiplier) {
+            if (countdown <= 5) {
+                alert("Betting is disabled in the last 5 seconds!");
+                return;
+            }
+
+            const betAmount = parseFloat(document.getElementById("betAmount").value);
+            if (isNaN(betAmount) || betAmount <= 0) {
+                alert("Please enter a valid bet amount!");
+                return;
+            }
+            if (betAmount > balance) {
+                alert("Insufficient balance!");
+                return;
+            }
+
+            // Store the bet in the bets array
+            const bet = { game, option, multiplier, amount: betAmount };
+            bets.push(bet);
+            alert(You selected ${game} - ${option} with multiplier ${multiplier} and bet amount ${betAmount.toFixed(2)});
+        }
+
+        // Confirm placing bets
+        function confirmBet() {
+            if (bets.length === 0) {
+                alert("Please place at least one bet.");
+                return;
+            }
+
+            // Deduct the total amount of all placed bets from the balance
+            let totalBetAmount = 0;
+            bets.forEach(bet => totalBetAmount += bet.amount);
+            if (totalBetAmount > balance) {
+                alert("Insufficient balance to place all bets!");
+                return;
+            }
+
+            balance -= totalBetAmount;
+            updateBalance();
+            alert(You placed ${bets.length} bets for a total of ${totalBetAmount.toFixed(2)});
+        }
+
+        // Disable betting in the last 5 seconds
+        function disableBetting() {
+            document.querySelectorAll(".option").forEach(option => {
+                option.style.pointerEvents = "none";
+                option.style.opacity = "0.5";
+            });
+        }
+
+        // Enable betting
+        function enableBetting() {
+            document.querySelectorAll(".option").forEach(option => {
+                option.style.pointerEvents = "auto";
+                option.style.opacity = "1";
+            });
+        }
+
+        // Evaluate the results of all placed bets
+        function evaluateBets() {
+            if (bets.length === 0) {
+                alert("No bets placed.");
+                return;
+            }
+
+            const colorOutcomes = ["Red", "Green", "Violet"];
+            const numberOutcomes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+            const bigSmallOutcomes = ["Big", "Small"];
+
+            bets.forEach(bet => {
+                let winningOutcome;
+                switch (bet.game) {
+                    case "Color":
+                        winningOutcome = colorOutcomes[Math.floor(Math.random() * colorOutcomes.length)];
+                        updateHistory("color-history", bet.option, winningOutcome);
+                        break;
+                    case "Number":
+                        winningOutcome = numberOutcomes[Math.floor(Math.random() * numberOutcomes.length)];
+                        updateHistory("number-history", bet.option, winningOutcome);
+                        break;
+                    case "BigSmall":
+                        winningOutcome = bigSmallOutcomes[Math.floor(Math.random() * bigSmallOutcomes.length)];
+                        updateHistory("bigsmall-history", bet.option, winningOutcome);
+                        break;
+                }
+
+                if (bet.option === winningOutcome) {
+                    const winnings = bet.amount * bet.multiplier;
+                    balance += winnings;
+                    alert(You won ${winnings.toFixed(2)} for your ${bet.game} bet!);
+                } else {
+                    alert(You lost your ${bet.game} bet.);
+                }
+            });
+            updateBalance();
+        }
+
+        // Update balance display
+        function updateBalance() {
+            document.getElementById("balance").innerText = balance.toFixed(2);
+        }
+
+        // Update result history
+        function updateHistory(historyId, userBet, winningOutcome) {
+            const historyList = document.getElementById(historyId);
+            const resultItem = document.createElement("li");
+            resultItem.textContent = Bet: ${userBet} | Result: ${winningOutcome};
+            historyList.appendChild(resultItem);
+        }
+
+        // Reset game for next round
+        function resetGame() {
+            bets = [];
+            enableBetting();
+            startTimer();
+        }
+
+        // Deposit function
+        function deposit() {
+            let depositAmount = prompt("Enter deposit amount:");
+            if (depositAmount && !isNaN(depositAmount)) {
+                balance += parseFloat(depositAmount);
+                updateBalance();
+            }
+        }
+
+        // Initialize game
+        startTimer();
+    </script>
+</body>
+</html> 
+

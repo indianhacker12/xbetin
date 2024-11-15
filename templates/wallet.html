@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <style>
+        /* Reset and Basic Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #3b7e46, #3eaf7e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+        .wallet-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transition: transform 0.3s ease;
+            transform: translateY(-50px);
+            animation: slideUp 0.5s ease-in-out forwards;
+        }
+        h2 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            font-family: 'Georgia', serif;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        .balance {
+            font-size: 1.8em;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+        }
+        .form-group {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-group input {
+            padding: 12px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            backdrop-filter: blur(6px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        .form-group input:focus {
+            border-color: #4e4dff;
+            box-shadow: 0 0 10px rgba(78, 77, 255, 0.5);
+            transform: scale(1.05);
+        }
+        .form-group button {
+            background-color: #4e4dff;
+            color: #fff;
+            border: none;
+            padding: 14px 0;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 15px rgba(78, 77, 255, 0.2);
+        }
+        .form-group button:hover {
+            background-color: #3b3aeb;
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(78, 77, 255, 0.4);
+        }
+        .form-group button:active {
+            transform: scale(0.98);
+        }
+        .flash-message {
+            margin-top: 20px;
+            padding: 12px;
+            color: #fff;
+            background-color: #ff5252;
+            border-radius: 8px;
+            font-size: 1em;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Keyframe Animations */
+        @keyframes slideUp {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(-50px);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wallet-container">
+        <h2>Your Wallet</h2>
+        <p class="balance">Balance: ₹{{ user.wallet_balance }}</p>
+        
+        <form method="POST" action="{{ url_for('wallet') }}" class="form-group">
+            <input type="number" name="amount" placeholder="Enter amount" required>
+            <button type="submit" name="action" value="deposit">Deposit</button>
+            <button type="submit" name="action" value="withdraw">Withdraw</button>
+        </form>
+    </div>
+</body>
+</html>

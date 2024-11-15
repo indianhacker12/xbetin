@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Betting Website</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Vertical Fixed Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100vh;
+            background-color: #1e3c72;
+            padding-top: 20px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 20px 0;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #ffcc00; /* Gold color for links */
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            text-align: center;
+        }
+
+        nav ul li a:hover {
+            color: #ffffff;
+            background-color: #ff9933; /* Orange hover effect */
+        }
+
+        /* Main content area with padding for the nav */
+        header, section, footer {
+            margin-left: 220px; /* Leave space for the nav bar */
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #1e3c72;
+            text-align: left;
+        }
+
+        /* Contact Form */
+        section {
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        input[type="submit"] {
+            background-color: #ffcc00; /* Gold */
+            color: #1e3c72; /* Dark blue text */
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #ff9933; /* Orange on hover */
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1e3c72;
+            color: #ffffff;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+            margin-left: 145px;
+        }
+
+        footer p {
+            margin-bottom: 0px;
+            padding-bottom: 20px;
+           
+            
+
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                width: 150px;
+            }
+
+            nav ul li a {
+                font-size: 1rem;
+            }
+
+            header, section, footer {
+                margin-left: 170px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="/account">Account</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/security">Security</a></li>
+            <li><a href="/terms">Terms and Conditions</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Contact Us</h1>
+    </header>
+
+    <section>
+        <h2>Get in Touch</h2>
+        <form action="/send_message" method="POST">
+            <label for="name">Your Name:</label>
+            <input type="text" name="name" id="name" required>
+            <label for="email">Your Email:</label>
+            <input type="email" name="email" id="email" required>
+            <label for="message">Message:</label>
+            <textarea name="message" id="message" required></textarea>
+            <input type="submit" value="Send Message">
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <p>
+                <a href="/terms">Terms and Conditions</a> | 
+                <a href="/privacy">Privacy Policy</a> | 
+                <a href="/security">Security</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

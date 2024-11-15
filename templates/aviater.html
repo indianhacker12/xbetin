@@ -1,0 +1,18 @@
+<!-- aviator.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Aviator Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Aviator Game, {{ user.username }}!</h1>
+        <p>Balance: ${{ user.wallet_balance }}</p>
+    </header>
+    <div id="game-container">
+        <!-- Aviator game content goes here -->
+    </div>
+</body>
+</html>

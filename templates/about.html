@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdf6e3;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            border: 2px solid black;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4682b4;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        /* About Us Container */
+        .about-container {
+            background-color: #ffffff;
+            padding: 40px;
+            max-width: 800px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #4682b4;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #ff7f50;
+        }
+
+        /* Decorative Line */
+        .line {
+            width: 80px;
+            height: 4px;
+            background-color: #4682b4;
+            margin: 0 auto 40px auto;
+            border-radius: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .about-container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <h1>About Us</h1>
+        <div class="line"></div>
+        <p>Welcome to our betting website! We offer a wide variety of games including Teen Patti, Color Trading, and more.</p>
+        <p>Our mission is to provide a fun and safe platform for users to enjoy and participate in exciting games and competitions. We are committed to ensuring a secure environment with encrypted transactions and strong user privacy measures.</p>
+        <p>Founded in 2024, we have rapidly grown into a trusted name in the betting industry, offering a unique gaming experience tailored to meet the needs of players of all skill levels.</p>
+        <p>If you have any questions, feel free to <a href="{{ url_for('contact') }}">contact us</a>!</p>
+    </div>
+    
+</body>
+</html>

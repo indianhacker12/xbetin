@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Your Game History</h1>
+
+    <h2>Color Prediction Game History</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Prediction</th>
+            <th>Actual Color</th>
+            <th>Bet Amount</th>
+            <th>Win/Loss</th>
+        </tr>
+        {% for game in all_games_history.color_game %}
+        <tr>
+            <td>{{ game.timestamp }}</td>
+            <td>{{ game.prediction }}</td>
+            <td>{{ game.actual_color }}</td>
+            <td>{{ game.bet_amount }}</td>
+            <td>{{ 'Win' if game.win else 'Loss' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Odd/Even Game History</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Prediction</th>
+            <th>Result</th>
+            <th>Bet Amount</th>
+            <th>Win/Loss</th>
+        </tr>
+        {% for game in all_games_history.odd_even_game %}
+        <tr>
+            <td>{{ game.timestamp }}</td>
+            <td>{{ game.prediction }}</td>
+            <td>{{ game.result }}</td>
+            <td>{{ game.bet_amount }}</td>
+            <td>{{ 'Win' if game.win else 'Loss' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Generic Game History</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Game Name</th>
+            <th>Result</th>
+        </tr>
+        {% for game in all_games_history.generic_game %}
+        <tr>
+            <td>{{ game.timestamp }}</td>
+            <td>{{ game.game_name }}</td>
+            <td>{{ game.result }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

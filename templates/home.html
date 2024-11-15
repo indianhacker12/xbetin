@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Betting Website - Home</title>
+    <link rel="shortcut icon" href="/static/img/xbt.jpg" type="image/x-icon">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #cfb8e5;
+            color: #e4ef48;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Vertical Navigation for Small Screens */
+        nav {
+            background-image: url('/static/img/Xbet/m.png');
+            background-attachment: fixed;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 140px;
+            height: 120vh;
+            
+            padding-top: 20px;
+            overflow-y: auto;
+            position: fixed;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 20px 0;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #ffcc00;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            text-align: center;
+        }
+
+        nav ul li a:hover {
+            color: #ffffff;
+            background-color: #ff9933;
+            border-radius: 10px;
+        }
+
+        /* Horizontal Navbar for Larger Screens */
+        @media (min-width: 700px) {
+            nav {
+                background-image: url('/static/img/Xbet/ne.jpg');
+                position: relative;
+                width: 100%;
+                height: 100px;
+                padding: 0;
+                background-color: #1e3c72;
+                
+            }
+
+            nav ul {
+                display: flex;
+                justify-content: center;
+                padding: 10px;
+            }
+
+            nav ul li {
+                margin: 0 10px;
+            }
+
+            nav ul li a {
+                font-size: 1rem;
+                padding: 10px;
+                text-align: center;
+                white-space: nowrap;
+                background-color: rgb(3, 73, 75);
+                border-radius: 10px;
+                margin: 20px;
+
+            }
+
+            footer {
+                background-color: #777e90;
+                padding-bottom: 10px;
+                text-align: center;
+                padding-top: 10px;
+                
+
+                
+            }
+
+          
+
+        }
+
+        /* Content margin adjustment for small screens */
+        @media (max-width: 767px) {
+            header, main {
+                margin-left: 140px;
+            }
+        }
+
+        /* Header styling */
+        header h1 {
+            font-size: 2.5rem;
+            color: #1e3c72;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Betting Games Section */
+        .betting-games {
+            background-color: #03212bea;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 0%;
+            margin: 0;
+            width: 100%;
+            position:static;
+            padding-left: 10px;
+            padding-bottom: 70px;
+        }
+
+        .betting-games h2 {
+            color: #f6f8fc;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 70px;
+            padding-bottom: 10px;
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Limit to 2 rows on larger screens */
+        @media (min-width: 1024px) {
+            .games-grid {
+                grid-template-columns: repeat(6, 1fr);
+                max-height: calc(2 * 160px + 40px); /* Adjust based on card height and gap */
+                overflow-y: hidden;
+            }
+        }
+
+       
+        .game-card:hover {
+            background-color: #35937a;
+            color: #fff;
+        }
+
+
+
+        div.scroll-container {
+            
+            overflow: auto;
+            white-space: nowrap;
+            padding: 10px;
+
+
+        }
+
+        div.scroll-container img {
+            padding: 0px;
+           
+            width: 250px;
+            border-radius: 30px; 
+            
+            
+            }
+   
+
+        
+        .game-card {
+            background-size:  cover; 
+            background-position: center; /* Center the background image */
+            color: #fff;
+            padding: 50px;
+            border-radius: 8px;
+            text-align: center;
+            background-color: cyan;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 10px;
+        }
+
+        .game-card p {
+            font-weight: bold;
+           
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .game-card:hover {
+            filter: brightness(0.8); /* Darken the background on hover */
+            color: #ffcc00;
+        }
+
+        /* Specific Background Images for Each Game */
+        .bingo {
+            background-image: url('/static/img/bingo.png');
+        }
+        .dice {
+            background-image: url('/static/img/dice.png');
+        }
+        .keno {
+            background-image: url('/static/img/keno.png');
+        }
+        .horse {
+            background-image: url('/static/img/horse.png');
+        }
+        .lottery {
+            background-image: url('/static/img/lottery.png');
+        }
+        .fantasy {
+            background-image: url('/static/img/slots.png');
+        }
+        .casino {
+            background-image: url('/static/img/casi.png');
+        }
+        .sport {
+            background-image: url('/static/img/sport.png');
+        }
+        .teen{
+            background-image: url('/static/img/teen.png');
+        }
+        .espot {
+            background-image: url('/static/img/esport.png');
+        }
+        .aviator{
+            background-image: url('/static/img/aviator.png');
+        }
+        .odd-even {
+            background-image: url('/static/img/xbt.jpg');
+        }
+
+       
+        
+    
+        #chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #0078d7;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Chat iframe styling */
+        #chat-iframe-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 400px;
+            height: 500px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none; /* Hidden by default */
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+    </style>
+             
+</head>
+ <body>
+             
+    <nav>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/account">Account</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/promo">Bonus</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/help">help</a></li>
+            l
+        </ul>
+    </nav>
+
+    <header>
+        <div class="scroll-container">
+            <img src="/static/img/aii.webp">
+            <img src="/static/img/aii.webp">
+            <img src="/static/img/aii.webp">
+            <img src="/static/img/aii.webp">
+            <img src="/static/img/aii.webp">
+            <img src="/static/img/aii.webp">
+            
+           
+          </div>
+        
+       
+    </header>
+
+    <main>
+        <section class="betting-games">
+            <h2>Available Games</h2>
+            <div class="games-grid">
+                <a href="/aviator" class="game-card aviator"><p>Aviator Game</p></a>
+                <a href="/color-prediction" class="game-card bingo"><p>Bingo Game</p></a>
+                <a href="/odd-even" class="game-card keno"><p>Keno Game</p></a>
+                <a href="/dice" class="game-card dice"><p>Dice Game</p></a>
+                <a href="/horse" class="game-card horse"><p>Horse Betting</p></a>
+                <a href="/lottery" class="game-card lottery"><p>Lottery Game</p></a>
+                <a href="/fantasy" class="game-card fantasy"><p>Fantasy Sports</p></a>
+                <a href="/casino" class="game-card casino"><p>Casino</p></a>
+                <a href="/sports" class="game-card sport"><p>Sports Betting</p></a>
+                <a href="/teen-patti" class="game-card teen"><p>Teen Patti</p></a>
+                <a href="/espot" class="game-card espot"><p>E Spot</p></a>
+                <a href="/odd_even" class="game-card odd-even"><p>Odd/Even Game</p></a>
+            </div>
+            
+        </section>
+    </main>
+
+
+    <footer>
+        <div class="ft">
+            <p>
+                <a href="/terms">Terms and Conditions</a>     | 
+                <a href="/privacy">Privacy Policy</a>  |
+                <a href="/security">Security</a> 
+            </p>
+        </div>
+    </footer>
+    <div id="chat-button" onclick="toggleChat()">
+        💬
+    </div>
+
+    <!-- Chat Iframe Container -->
+    <div id="chat-iframe-container">
+        <iframe 
+            src="https://cdn.botpress.cloud/webchat/v2.2/shareable.html?configUrl=https://files.bpcontent.cloud/2024/11/14/13/20241114135337-1PRMIFXV.json" 
+            width="100%" 
+            height="100%" 
+            style="border: none;">
+        </iframe>
+    </div>
+    <script>
+        function toggleChat() {
+            const chatContainer = document.getElementById('chat-iframe-container');
+            chatContainer.style.display = chatContainer.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

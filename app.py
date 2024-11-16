@@ -10,32 +10,8 @@ import random
 app = Flask(__name__)
 
 
-# User model
 
 
-
-# OddEvenGameResult model to store bets and results for the Odd/Even game
-# class OddEvenGameResult(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#     prediction = db.Column(db.String(50), nullable=False)
-#     result = db.Column(db.String(50), nullable=False)
-#     bet_amount = db.Column(db.Float, nullable=False)
-#     win = db.Column(db.Boolean, nullable=False)
-#     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-#     user = db.relationship('User', backref='odd_even_game_results')
-
-# class ColorGameResult(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#     prediction = db.Column(db.String(50), nullable=False)
-#     result = db.Column(db.String(50), nullable=False)
-#     bet_amount = db.Column(db.Float, nullable=False)
-#     win = db.Column(db.Boolean, nullable=False)
-#     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-#     user = db.relationship('User', backref='ColorGameResult')
-
-# Home route
 @app.route('/')
 def main():
     return redirect(url_for('home'))
@@ -101,7 +77,7 @@ def color_prediction():
 def plinko():
     return render_template("plinko.html", user=session.get('username', None))
 
-if __name__ == '__main__':
+
 
 if __name__ == '__main__':
     app.run(debug=True)

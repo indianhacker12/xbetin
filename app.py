@@ -79,7 +79,29 @@ def contact():
         flash('Your message has been sent!', 'success')
     return render_template('contact.html')
 
+#coin root
+@app.route('/coin')
+def coin():
+    return render_template("coin.html", user=session.get('username', None))
+@app.route('/keno')
+def keno():
+    return render_template("keno.html", user=session.get('username', None))
+@app.route('/odd_even')
+def odd_even():
+    return render_template("odd-even.html", user=session.get('username', None))
 
+@app.route('/color-game')
+def color():
+    return render_template("color.html", user=session.get('username', None))
+@app.route('/color-prediction')
+def color_prediction():
+    return render_template("color_game.html", user=session.get('username', None))
+
+@app.route('/plinko')
+def plinko():
+    return render_template("plinko.html", user=session.get('username', None))
+
+if __name__ == '__main__':
 
 if __name__ == '__main__':
     app.run(debug=True)

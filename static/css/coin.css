@@ -1,66 +1,100 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
 
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #f0f0f0;
+    margin: 0;
+    background: #1b1f23;
+    font-family: Arial, sans-serif;
+    color: #fff;
 }
-
-.container {
+.game-container {
     text-align: center;
+    padding: 30px;
+    background: #222831;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
 }
-
+h1 {
+    color: #00adb5;
+}
 .coin {
     width: 100px;
     height: 100px;
-    position: relative;
     margin: 20px auto;
+    position: relative;
     perspective: 1000px;
 }
-
-.coin div {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    color: white;
+.coin-img {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    line-height: 100px;
-    font-weight: bold;
+    position: absolute;
+    backface-visibility: hidden;
+    transition: transform 0.3s;
 }
-
 .heads {
-    background: #4caf50;
+    background-image: url('/static/img/head.png'); /* Replace with online coin heads image */
+    background-size: cover;
     transform: rotateY(0deg);
 }
-
 .tails {
-    background: #f44336;
+    background-image: url('/static/img/tail.png'); /* Replace with online coin tails image */
+    background-size: cover;
     transform: rotateY(180deg);
 }
-
-button {
-    margin-top: 20px;
-    padding: 10px 20px;
+.buttons, .stats {
+    margin: 20px 0;
+}
+.button {
+    background-color: #00adb5;
+    border: none;
+    padding: 10px 15px;
+    color: #fff;
     font-size: 16px;
     cursor: pointer;
+    margin: 5px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
 }
-
-.result {
+.button:hover {
+    background-color: #007f87;
+}
+.result, .stats, .balance {
+    margin-top: 15px;
+    font-size: 1.2em;
+}
+table {
+    width: 100%;
     margin-top: 20px;
-    font-size: 18px;
+    border-collapse: collapse;
+    background: #393e46;
+    border-radius: 8px;
 }
-
-
-
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+}
+th {
+    background-color: #00adb5;
+    color: white;
+}
+td {
+    color: #fff;
+}
+.history-container {
+    margin-top: 20px;
+    text-align: left;
+    overflow-y: auto;
+    max-height: 200px;
+}
+.input-field {
+    padding: 8px;
+    font-size: 16px;
+    width: 100px;
+    text-align: center;
+}

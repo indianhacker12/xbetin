@@ -1,0 +1,96 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #007bff, #28a745);
+    margin: 0;
+    color: #fff;
+}
+
+.game-container {
+    width: 90%;
+    max-width: 600px;
+    background-color: #343a40;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+h2 {
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.wallet, .bet-section, .options, .history, .leaderboard, .timer, .auto-rebuy {
+    margin-bottom: 20px;
+}
+
+.button {
+    padding: 12px 25px;
+    font-size: 16px;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+}
+
+.odd { background-color: #007bff; }
+.even { background-color: #28a745; }
+.autobet-btn { background-color: #ffc107; color: #343a40; }
+.cancel-btn { background-color: #dc3545; }
+
+input[type="number"] {
+    padding: 10px;
+    width: calc(100% - 22px);
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+input[type="number"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.history table, .leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    color: #fff;
+}
+
+.history th, .leaderboard th, .history td, .leaderboard td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #495057;
+}
+
+.history tr:hover {
+    background-color: #495057;
+}
+
+.timer {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffc107;
+}
+
+@media (max-width: 600px) {
+    .game-container {
+        padding: 20px;
+    }
+
+    .button {
+        width: 100%;
+        margin: 10px 0;
+    }
+}

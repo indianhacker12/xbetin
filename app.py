@@ -5,55 +5,98 @@ import razorpay
 from datetime import datetime
 import random
 
-
+import pymysql
 from razorpay_config import RAZORPAY_API_KEY, RAZORPAY_API_SECRET
 
 # Initialize Razorpay client and Flask app
 razorpay_client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET))
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Replace with a secure key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/myadmin'  # MySQL database connection
+# app.secret_key = 'your_secret_key'  # Replace with a secure key
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/myadmin'  # MySQL database connection
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+RAZORPAY_API_KEY = "your_razorpay_api_key"
+RAZORPAY_API_SECRET = "your_razorpay_api_secret"
+razorpay_client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET))
+app.secret_key = 'your_secret_key'  
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myadminn_user:3eEby3pbvwT76mvbhYaOQh4L7gSctPdw@dpg-cssagt0gph6c7393msb0-a.virginia-postgres.render.com/myadminn'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
+
 # User model
+# Function to create database if it doesn't exist
+def create_database_if_not_exists():
+    db_name = 'myadmin'
+    connection = pymysql.connect(host='localhost', user='root', password='')
+    cursor = connection.cursor()
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+    connection.close()
+
+# Call the function to ensure the database exists
+create_database_if_not_exists()
+
+# Define models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), unique=True, nullable=False)
-    pass_hash = db.Column(db.String(200), nullable=False)  # Store hashed password
+    pass_hash = db.Column(db.String(200), nullable=False)
     wallet_balance = db.Column(db.Float, nullable=False, default=0)
 
-# GameResult model for generic game results
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.now())
+
 class GameResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    game_name = db.Column(db.String(100), default='Dice Roll')
-    result = db.Column(db.Integer, nullable=False)
+    game_id = db.Column(db.Integer, nullable=False)
+    bet_choice = db.Column(db.String(10), nullable=False)
+    bet_amount = db.Column(db.Float, nullable=False)
+    result = db.Column(db.String(10), nullable=False)
+    payout = db.Column(db.Float, nullable=False)
+    time = db.Column(db.String(50), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('game_results', lazy=True))
+
+  
+class CoinFlipGameResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    prediction = db.Column(db.String(10), nullable=False)
+    result = db.Column(db.String(10), nullable=False)
+    bet_amount = db.Column(db.Float, nullable=False)
+    win = db.Column(db.Boolean, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-    user = db.relationship('User', backref='game_results')
+
+class Wallet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    balance = db.Column(db.Float, default=0.0)
+    user = db.relationship('User', backref='wallet')
 
 
-# OddEvenGameResult model to store bets and results for the Odd/Even game
-# class OddEvenGameResult(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#     prediction = db.Column(db.String(50), nullable=False)
-#     result = db.Column(db.String(50), nullable=False)
-#     bet_amount = db.Column(db.Float, nullable=False)
-#     win = db.Column(db.Boolean, nullable=False)
-#     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-#     user = db.relationship('User', backref='odd_even_game_results')
+class GameHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    bet_amount = db.Column(db.Numeric(10, 2), nullable=False)
+    prediction = db.Column(db.String(10), nullable=False)
+    outcome = db.Column(db.String(10), nullable=False)
+    result = db.Column(db.String(10), nullable=False)
+    new_balance = db.Column(db.Numeric(10, 2), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# class ColorGameResult(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#     prediction = db.Column(db.String(50), nullable=False)
-#     result = db.Column(db.String(50), nullable=False)
-#     bet_amount = db.Column(db.Float, nullable=False)
-#     win = db.Column(db.Boolean, nullable=False)
-#     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-#     user = db.relationship('User', backref='ColorGameResult')
+
+
+
+# Automatically create tables
+with app.app_context():
+    db.create_all()    #imp
+
 
 # Home route
 @app.route('/')
@@ -113,6 +156,26 @@ def wallet():
         else:
             flash('Insufficient balance or invalid action!', 'danger')
     return render_template('wallet.html', user=user)
+@app.route('/get_balance', methods=['GET'])
+def get_balance():
+    user_id = request.args.get('user_id')
+    user = User.query.get(user_id)
+    if user:
+        return jsonify({"balance": user.wallet_balance})
+    return jsonify({"error": "User not found"}), 404
+
+@app.route('/update_balance', methods=['POST'])
+def update_balance():
+    data = request.json
+    user_id = data.get("user_id")
+    new_balance = data.get("new_balance")
+
+    user = User.query.get(user_id)
+    if user:
+        user.wallet_balance = new_balance
+        db.session.commit()
+        return jsonify({"success": True})
+    return jsonify({"error": "User not found"}), 404
 
 # Create order for Razorpay payment
 @app.route('/create_order/<float:amount>', methods=['GET'])
@@ -187,13 +250,13 @@ def game_history():
     user_id = session['user_id']
 
     # Fetch each game type's history from the database
-    # color_game_history = ColorGameResult.query.filter_by(user_id=user_id).order_by(ColorGameResult.timestamp.desc()).all()
+    color_game_history = CoinFlipGameResult.query.filter_by(user_id=user_id).order_by(CoinFlipGameResult.timestamp.desc()).all()
     odd_even_game_history = OddEvenGameResult.query.filter_by(user_id=user_id).order_by(OddEvenGameResult.timestamp.desc()).all()
     generic_game_history = GameResult.query.filter_by(user_id=user_id).order_by(GameResult.timestamp.desc()).all()
 
     # Structure data to pass to the template
     all_games_history = {
-        # 'color_game': color_game_history,
+        'color_game': color_game_history,
         'odd_even_game': odd_even_game_history,
         'generic_game': generic_game_history
     }
@@ -223,36 +286,67 @@ def about():
     return render_template('about.html')
 
 # Contact route
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        message = request.form['message']
-        flash('Your message has been sent!', 'success')
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    message = request.form.get('message')
+
+    # Validate the input
+    if not name or not email or not message:
+        return "All fields are required!", 400
+
+    # Save to the database
+    try:
+        new_message = ContactMessage(name=name, email=email, message=message)
+        db.session.add(new_message)
+        db.session.commit()
+        return redirect(url_for('contact_success'))  # Redirect to a success page
+    except Exception as e:
+        return f"An error occurred: {str(e)}", 500
+
+@app.route('/contact')
+def contact_page():
     return render_template('contact.html')
 
+@app.route('/contact_success')
+def contact_success():
+    return "Your message has been sent successfully!"
 
-@app.route('/get_balance', methods=['GET'])
-def get_balance():
-    user_id = request.args.get('user_id')
-    user = User.query.get(user_id)
-    if user:
-        return jsonify({"balance": user.wallet_balance})
-    return jsonify({"error": "User not found"}), 404
+#coin root
+@app.route('/coin')
+def coin():
+    return render_template("coin.html", user=session.get('username', None))
+@app.route('/keno')
+def keno():
+    return render_template("keno.html", user=session.get('username', None))
+@app.route('/odd_even')
+def odd_even():
+    return render_template("odd-even.html", user=session.get('username', None))
 
-@app.route('/update_balance', methods=['POST'])
-def update_balance():
-    data = request.json
-    user_id = data.get("user_id")
-    new_balance = data.get("new_balance")
+@app.route('/color-game')
+def color():
+    return render_template("color.html", user=session.get('username', None))
+@app.route('/color-prediction')
+def color_prediction():
+    return render_template("color_game.html", user=session.get('username', None))
 
-    user = User.query.get(user_id)
-    if user:
-        user.wallet_balance = new_balance
-        db.session.commit()
-        return jsonify({"success": True})
-    return jsonify({"error": "User not found"}), 404
+@app.route('/plinko')
+def plinko():
+    return render_template("plinko.html", user=session.get('username', None))
+
+
+
+
+
+#game route section
+
+
+
+
+
+
+
 
 
 

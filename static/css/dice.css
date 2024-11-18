@@ -1,0 +1,136 @@
+/* styles.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #3f6791, #440b1d);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+  
+  .game-container {
+    background: linear-gradient(145deg, rgb(238, 80, 143), #0c0a04);
+    border-radius: 15px;
+    padding: 30px;
+    width: 350px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #fff;
+  }
+  
+  h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .balance, .streaks {
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+  
+  .betting {
+    margin-bottom: 20px;
+  }
+  
+  #bet-amount, #bet-number {
+    padding: 12px;
+    font-size: 16px;
+    width: 80%;
+    margin: 10px auto;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bet-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .bet-option {
+    background: #ff5e5e;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .bet-option:hover {
+    background: #ff3d3d;
+  }
+  
+  #roll-dice {
+    background: #28a745;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  #roll-dice:hover {
+    background: #218838;
+    border: 2px solid black;
+  }
+  
+  .dice-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .dice {
+    width: 80px;
+    height: 80px;
+    background-color: #099967;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    border: 2px solid #fff;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  #result {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  
+  #outcome {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .history {
+    margin-top: 20px;
+  }
+  
+  .history ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .history li {
+    padding: 8px;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: #3a0307;
+  }
+  
+  #result span {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  

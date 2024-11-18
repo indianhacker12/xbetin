@@ -4,65 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Odd-Even Prediction Game</title>
+    <link rel="stylesheet" href="/static/css/odd-even.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f9;
-            margin: 0;
-        }
-        .game-container {
-            width: 600px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .wallet, .bet-section, .options, .history, .leaderboard, .timer, .auto-rebuy {
-            margin-bottom: 20px;
-        }
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        .odd { background-color: #3498db; }
-        .even { background-color: #2ecc71; }
-        .history table, .leaderboard table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .history th, .history td, .leaderboard th, .leaderboard td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .result-message {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .timer {
-            font-size: 18px;
-            font-weight: bold;
-            color: #e74c3c;
-        }
+        /* Add these styles to your odd-even.css file */
+
+/* Style for win rows */
+.win {
+    background-color: #d4edda;  /* Light green */
+    color: #155724; /* Dark green text */
+}
+
+/* Style for lose rows */
+.lose {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24; /* Dark red text */
+}
+
+
+
+
+button {
+    padding: 8px 16px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
     </style>
 </head>
 <body>
     <div class="game-container">
-        <h2>Advanced Odd-Even Prediction Game</h2>
+        <h2>Odd-Even Prediction Game</h2>
         
         <div class="wallet">
             <strong>Wallet Balance: $<span id="wallet-balance">1000</span></strong>
+        </div>
+
+        <!-- Timer moved above the Bet options -->
+        <div class="timer">
+            Time remaining: <span id="timer">30</span>s
         </div>
 
         <div class="bet-section">
@@ -71,21 +57,13 @@
         </div>
 
         <div class="options">
-            <button class="button odd" onclick="placeBet('Odd')">Bet Odd (<span id="odd-odds">1.9</span>x)</button>
-            <button class="button even" onclick="placeBet('Even')">Bet Even (<span id="even-odds">1.8</span>x)</button>
-        </div>
-
-        <div class="timer">
-            Time remaining: <span id="timer">30</span>s
+            <button class="button odd" id="odd-bet" onclick="placeBet('Odd')">Bet Odd (<span id="odd-odds">1.9</span>x)</button>
+            <button class="button even" id="even-bet" onclick="placeBet('Even')">Bet Even (<span id="even-odds">1.8</span>x)</button>
         </div>
 
         <div id="result-message" class="result-message"></div>
 
-        <div class="auto-rebuy">
-            <label for="auto-rebuy-rounds">Auto-Rebuy Rounds:</label>
-            <input type="number" id="auto-rebuy-rounds" value="0" min="0">
-        </div>
-
+        <!-- History Section -->
         <div class="history">
             <h3>Game History</h3>
             <button onclick="filterHistory('all')">All</button>
@@ -106,40 +84,36 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="leaderboard">
-            <h3>Leaderboard</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Player</th>
-                        <th>Balance</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard">
-                    <!-- Leaderboard rows will be added here by JavaScript -->
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <script>
         let walletBalance = 1000;
-        let gameId = 1;
+        let gameId = 20241212;
         let timer = 30;
         let intervalId;
         let bets = [];
-        let autoRebuyRounds = 0;
-        const leaderboard = [{ name: "Player 1", balance: 1000 }, { name: "Player 2", balance: 1200 }];
         const winSound = new Audio('win.mp3');
         const loseSound = new Audio('lose.mp3');
         document.getElementById('wallet-balance').textContent = walletBalance;
+        
+        const historyData = []; // To store the full history
+        const displayedGameIds = new Set(); // To track displayed game IDs
 
         function startTimer() {
             timer = 30;
             intervalId = setInterval(() => {
                 timer--;
                 document.getElementById("timer").textContent = timer;
+
+                // Disable the betting options during the last 5 seconds
+                if (timer <= 5) {
+                    document.getElementById('odd-bet').disabled = true;
+                    document.getElementById('even-bet').disabled = true;
+                } else {
+                    document.getElementById('odd-bet').disabled = false;
+                    document.getElementById('even-bet').disabled = false;
+                }
+
                 if (timer === 0) {
                     clearInterval(intervalId);
                     endRound();
@@ -171,7 +145,7 @@
             const result = randomNumber % 2 === 0 ? 'Even' : 'Odd';
             let resultMessage = `The number was ${randomNumber} (${result}). `;
             let totalPayout = 0;
-            
+
             bets.forEach((bet) => {
                 let outcome = "Lose";
                 if (bet.choice === result) {
@@ -186,7 +160,12 @@
                     resultMessage += `You lost $${bet.amount} for ${bet.choice}. `;
                     loseSound.play();
                 }
-                addToHistory(gameId, bet.choice, bet.amount, outcome, new Date().toLocaleTimeString());
+
+                // Add the result to history only if the game ID hasn't been shown yet
+                if (!displayedGameIds.has(gameId)) {
+                    addToHistory(gameId, bet.choice, bet.amount, outcome, new Date().toLocaleTimeString());
+                    displayedGameIds.add(gameId); // Mark this game ID as displayed
+                }
             });
 
             document.getElementById('wallet-balance').textContent = walletBalance;
@@ -203,17 +182,27 @@
         }
 
         function addToHistory(gameId, choice, amount, outcome, time) {
+            // Store the full history in the array
+            historyData.push({ gameId, choice, amount, outcome, time });
+
+            // Display only the last 5 results
             const historyTable = document.getElementById('history');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${gameId}</td>
-                <td>${choice}</td>
-                <td>$${amount}</td>
-                <td>${outcome}</td>
-                <td>${time}</td>
-            `;
-            row.className = outcome === "Win" ? "win" : "lose";
-            historyTable.appendChild(row);
+            historyTable.innerHTML = ''; // Clear previous history rows
+
+            // Show last 5 history results
+            const recentHistory = historyData.slice(-5);
+            recentHistory.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.gameId}</td>
+                    <td>${item.choice}</td>
+                    <td>$${item.amount}</td>
+                    <td>${item.outcome}</td>
+                    <td>${item.time}</td>
+                `;
+                row.className = item.outcome === "Win" ? "win" : "lose";
+                historyTable.appendChild(row);
+            });
         }
 
         function adjustOdds() {

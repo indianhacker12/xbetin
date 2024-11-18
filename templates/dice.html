@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Dice Game</title>
+  <link rel="stylesheet" href="/static/css/dice.css">
+</head>
+<body>
+  <div class="game-container">
+    <h1>Advanced Dice Game</h1>
+
+    <div class="balance">
+      <p>Your Balance: $<span id="balance">100</span></p>
+    </div>
+
+    <div class="betting">
+      <h3>Place Your Bet</h3>
+      <input type="number" id="bet-amount" placeholder="Enter Bet Amount" min="1">
+      <input type="number" id="bet-number" placeholder="Guess a Number (2-12)" min="2" max="12">
+      
+      <!-- Bet Type Buttons -->
+      <div class="bet-buttons">
+        <button class="bet-option" id="bet-number-btn">Bet on Number</button>
+        <button class="bet-option" id="bet-odd-btn">Bet on Odd</button>
+        <button class="bet-option" id="bet-even-btn">Bet on Even</button>
+        <button class="bet-option" id="bet-high-btn">Bet on High (7-12)</button>
+        <button class="bet-option" id="bet-low-btn">Bet on Low (2-6)</button>
+      </div>
+
+      <button id="roll-dice">Roll the Dice</button>
+    </div>
+
+    <div class="dice-container">
+      <div id="dice-1" class="dice"></div>
+      <div id="dice-2" class="dice"></div>
+    </div>
+
+    <div id="result">
+      <p>Result: <span id="dice-result">---</span></p>
+      <p id="outcome">---</p>
+    </div>
+
+    <div class="history">
+      <h3>Roll History</h3>
+      <ul id="history-list"></ul>
+    </div>
+
+    <div class="streaks">
+      <p>Win Streak: <span id="win-streak">0</span></p>
+      <p>Loss Streak: <span id="loss-streak">0</span></p>
+    </div>
+  </div>
+
+  <script src="/static/js/dice.js"></script>
+</body>
+</html>

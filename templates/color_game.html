@@ -111,7 +111,7 @@
             // Store the bet in the bets array
             const bet = { game, option, multiplier, amount: betAmount };
             bets.push(bet);
-            alert(You selected ${game} - ${option} with multiplier ${multiplier} and bet amount ${betAmount.toFixed(2)});
+            alert(`You selected ${game} - ${option} with multiplier ${multiplier} and bet amount ${betAmount.toFixed(2)}`);
         }
 
         // Confirm placing bets
@@ -131,7 +131,7 @@
 
             balance -= totalBetAmount;
             updateBalance();
-            alert(You placed ${bets.length} bets for a total of ${totalBetAmount.toFixed(2)});
+            alert(`You placed ${bets.length} bets for a total of ${totalBetAmount.toFixed(2)}`);
         }
 
         // Disable betting in the last 5 seconds
@@ -181,9 +181,9 @@
                 if (bet.option === winningOutcome) {
                     const winnings = bet.amount * bet.multiplier;
                     balance += winnings;
-                    alert(You won ${winnings.toFixed(2)} for your ${bet.game} bet!);
+                    alert(`You won ${winnings.toFixed(2)} for your ${bet.game} bet!`);
                 } else {
-                    alert(You lost your ${bet.game} bet.);
+                    alert(`You lost your ${bet.game} bet.`);
                 }
             });
             updateBalance();
@@ -198,7 +198,7 @@
         function updateHistory(historyId, userBet, winningOutcome) {
             const historyList = document.getElementById(historyId);
             const resultItem = document.createElement("li");
-            resultItem.textContent = Bet: ${userBet} | Result: ${winningOutcome};
+            resultItem.textContent = `Bet: ${userBet} | Result: ${winningOutcome}`;
             historyList.appendChild(resultItem);
         }
 
@@ -222,5 +222,4 @@
         startTimer();
     </script>
 </body>
-</html> 
-
+</html>

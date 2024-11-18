@@ -1,0 +1,107 @@
+/* roll.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f1f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .game-container {
+    text-align: center;
+    border: 2px solid #333;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .roulette-wheel {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin: 0 auto;
+    overflow: hidden;
+    transform-origin: center center;
+  }
+  
+  .roulette-wheel img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+  }
+  
+  .roulette-ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    pointer-events: none;
+    transform-origin: 50% 50%;
+    transition: transform 4s ease-out;
+  }
+  
+  .betting-options {
+    margin-top: 20px;
+  }
+  
+  .bet-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .bet-button:hover {
+    background-color: #218838;
+  }
+  
+  #game-status {
+    margin-top: 20px;
+  }
+  
+  #spin-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+  }
+  
+  #spin-button:hover {
+    background-color: #0056b3;
+  }
+  
+  #result {
+    margin-top: 20px;
+  }
+  
+  @keyframes spin-wheel {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(3600deg); /* 10 full rotations */
+    }
+  }
+  
+
+  
+  

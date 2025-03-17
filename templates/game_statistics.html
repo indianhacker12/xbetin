@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Game Statistics</h2>
+        <p>Total Games Played: {{ total_games }}</p>
+        <p>Total Wins: {{ total_wins }}</p>
+        <p>Total Losses: {{ total_losses }}</p>
+    </div>
+</body>
+</html>

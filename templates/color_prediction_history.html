@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Prediction History</title>
+    <link rel="stylesheet" href="/static/css/color_prediction.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Color Prediction History</h1>
+        
+        <div class="history-stats">
+            <div class="stat-box">
+                <h3>Total Games</h3>
+                <p class="stat-value">{{ games|length }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>Total Wagered</h3>
+                <p class="stat-value">₹{{ games|sum(attribute='bet_amount') if games else 0 }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>Total Winnings</h3>
+                <p class="stat-value">₹{{ games|sum(attribute='winnings') if games else 0 }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>Net Profit/Loss</h3>
+                <p class="stat-value {{ 'profit' if (games|sum(attribute='winnings') - games|sum(attribute='bet_amount') if games else 0) > 0 else 'loss' }}">
+                    ₹{{ (games|sum(attribute='winnings') - games|sum(attribute='bet_amount')) if games else 0 }}
+                </p>
+            </div>
+        </div>
+        
+        <div class="history-table-container">
+            {% if games and games|length > 0 %}
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Game #</th>
+                        <th>Bet Amount</th>
+                        <th>Your Choice</th>
+                        <th>Winning Color</th>
+                        <th>Result</th>
+                        <th>Winnings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for game in games %}
+                    <tr class="{{ 'win' if game.result == 'win' else 'lose' }}">
+                        <td>{{ game.id }}</td>
+                        <td>₹{{ game.bet_amount }}</td>
+                        <td>
+                            <span class="color-badge {{ game.user_choice }}">{{ game.user_choice|upper }}</span>
+                        </td>
+                        <td>
+                            <span class="color-badge {{ game.winning_color }}">{{ game.winning_color|upper }}</span>
+                        </td>
+                        <td class="result">{{ 'WIN' if game.result == 'win' else 'LOSS' }}</td>
+                        <td>₹{{ game.winnings }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-history">
+                <h3>No game history yet</h3>
+                <p>Play some games to see your history here!</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="navigation-links">
+            <a href="/color-prediction" class="nav-link">Play Again</a>
+            <a href="/home" class="nav-link">Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation to the stats boxes
+            const statBoxes = document.querySelectorAll('.stat-box');
+            statBoxes.forEach((box, index) => {
+                setTimeout(() => {
+                    box.classList.add('animate');
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html> 

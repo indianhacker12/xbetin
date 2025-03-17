@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keno Betting Game</title>
+    <link rel="stylesheet" href="/static/css/keno.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Keno Betting Game</h1>
+        <div class="game-info">
+            <p class="balance">Wallet Balance: ₹<span id="wallet-balance">{{ balance }}</span></p>
+            <p class="jackpot">Jackpot: ₹<span id="jackpot-amount">10000</span></p>
+        </div>
+        
+        <div class="bet-options">
+            <button class="bet-option" data-amount="10">₹10</button>
+            <button class="bet-option" data-amount="50">₹50</button>
+            <button class="bet-option" data-amount="100">₹100</button>
+            <button class="bet-option" data-amount="500">₹500</button>
+            <button class="bet-option" data-amount="1000">₹1000</button>
+        </div>
+        
+        <form method="POST" id="keno-form" class="bet-section">
+            <div class="bet-input">
+                <label for="bet_amount">Bet Amount:</label>
+                <input type="number" id="bet_amount" name="bet_amount" min="10" required>
+            </div>
+            
+            <div class="selection-info">
+                <p>Select 5 Numbers (Current: <span id="selected-count">0</span>/5)</p>
+                <button type="button" id="quick-pick" class="button secondary">Quick Pick</button>
+                <button type="button" id="clear-selection" class="button secondary">Clear</button>
+            </div>
+            
+            <div class="numbers-container">
+                {% for num in range(1, 21) %}
+                <div class="number" data-number="{{ num }}">
+                    <input type="checkbox" name="user_numbers" value="{{ num }}" id="num-{{ num }}" class="hidden-checkbox">
+                    <label for="num-{{ num }}">{{ num }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="payout-info">
+                <h3>Payout Information</h3>
+                <table>
+                    <tr>
+                        <th>Matches</th>
+                        <th>Multiplier</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1x</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2x</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>5x</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>10x</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>50x</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <button type="submit" id="place-bet" class="button primary" disabled>Place Bet</button>
+        </form>
+        
+        <div class="recent-games">
+            <h3>Recent Games</h3>
+            <div id="recent-games-list">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="navigation-links">
+            <a href="/keno/history" class="nav-link">View Full History</a>
+            <a href="/home" class="nav-link">Back to Home</a>
+        </div>
+    </div>
+    
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Game Result</h2>
+            <div id="result-content">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="number-animation">
+                <div id="drawn-numbers" class="drawn-numbers">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div id="matches-display"></div>
+            <div id="winnings-display"></div>
+            <button id="play-again" class="button primary">Play Again</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('keno-form');
+            const betAmountInput = document.getElementById('bet_amount');
+            const betOptions = document.querySelectorAll('.bet-option');
+            const numbers = document.querySelectorAll('.number');
+            const selectedCountDisplay = document.getElementById('selected-count');
+            const placeBetButton = document.getElementById('place-bet');
+            const quickPickButton = document.getElementById('quick-pick');
+            const clearSelectionButton = document.getElementById('clear-selection');
+            const modal = document.getElementById('result-modal');
+            const closeButton = document.querySelector('.close-button');
+            const playAgainButton = document.getElementById('play-again');
+            
+            // Set default bet amount
+            betAmountInput.value = 50;
+            
+            // Bet option buttons
+            betOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    betAmountInput.value = this.dataset.amount;
+                    betOptions.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Number selection
+            numbers.forEach(number => {
+                number.addEventListener('click', function() {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    const selectedNumbers = document.querySelectorAll('.number.selected');
+                    
+                    if (!this.classList.contains('selected') && selectedNumbers.length >= 5) {
+                        alert('You can only select 5 numbers!');
+                        return;
+                    }
+                    
+                    this.classList.toggle('selected');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    const newSelectedCount = document.querySelectorAll('.number.selected').length;
+                    selectedCountDisplay.textContent = newSelectedCount;
+                    
+                    // Enable/disable place bet button
+                    placeBetButton.disabled = newSelectedCount !== 5;
+                });
+            });
+            
+            // Quick Pick functionality
+            quickPickButton.addEventListener('click', function() {
+                // Clear current selection
+                numbers.forEach(number => {
+                    number.classList.remove('selected');
+                    number.querySelector('input[type="checkbox"]').checked = false;
+                });
+                
+                // Generate 5 random unique numbers
+                const availableNumbers = Array.from({length: 20}, (_, i) => i + 1);
+                const shuffled = availableNumbers.sort(() => 0.5 - Math.random());
+                const randomPicks = shuffled.slice(0, 5);
+                
+                // Select the random numbers
+                randomPicks.forEach(num => {
+                    const numberElement = document.querySelector(`.number[data-number="${num}"]`);
+                    numberElement.classList.add('selected');
+                    numberElement.querySelector('input[type="checkbox"]').checked = true;
+                });
+                
+                selectedCountDisplay.textContent = 5;
+                placeBetButton.disabled = false;
+            });
+            
+            // Clear selection
+            clearSelectionButton.addEventListener('click', function() {
+                numbers.forEach(number => {
+                    number.classList.remove('selected');
+                    number.querySelector('input[type="checkbox"]').checked = false;
+                });
+                selectedCountDisplay.textContent = 0;
+                placeBetButton.disabled = true;
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                fetch('/keno', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display result in modal
+                    document.getElementById('result-content').innerHTML = `
+                        <p>Your Numbers: ${data.user_numbers.join(', ')}</p>
+                    `;
+                    
+                    // Animate drawn numbers
+                    const drawnNumbersContainer = document.getElementById('drawn-numbers');
+                    drawnNumbersContainer.innerHTML = '';
+                    
+                    // Show modal
+                    modal.style.display = 'block';
+                    
+                    // Animate drawing numbers one by one
+                    data.generated_numbers.forEach((num, index) => {
+                        setTimeout(() => {
+                            const numElement = document.createElement('div');
+                            numElement.className = 'drawn-number';
+                            numElement.textContent = num;
+                            
+                            // Check if this number matches any user number
+                            if (data.user_numbers.includes(num)) {
+                                numElement.classList.add('match');
+                            }
+                            
+                            drawnNumbersContainer.appendChild(numElement);
+                            
+                            // After all numbers are drawn, show the result
+                            if (index === data.generated_numbers.length - 1) {
+                                setTimeout(() => {
+                                    document.getElementById('matches-display').innerHTML = `
+                                        <p>Matches: <span class="highlight">${data.matches}</span></p>
+                                    `;
+                                    document.getElementById('winnings-display').innerHTML = `
+                                        <p>Winnings: <span class="highlight">₹${data.winnings}</span></p>
+                                        <p>New Balance: ₹${data.balance}</p>
+                                    `;
+                                    
+                                    // Update wallet balance
+                                    document.getElementById('wallet-balance').textContent = data.balance;
+                                    
+                                    // Add to recent games
+                                    addToRecentGames(data);
+                                }, 500);
+                            }
+                        }, index * 1000); // Draw a new number every second
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            });
+            
+            // Close modal
+            closeButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Play again
+            playAgainButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Function to add game to recent games list
+            function addToRecentGames(game) {
+                const recentGamesList = document.getElementById('recent-games-list');
+                const gameElement = document.createElement('div');
+                gameElement.className = 'recent-game';
+                
+                const resultClass = game.matches > 0 ? 'win' : 'lose';
+                
+                gameElement.innerHTML = `
+                    <span class="game-time">${new Date().toLocaleTimeString()}</span>
+                    <span class="game-numbers">${game.user_numbers.join(', ')}</span>
+                    <span class="game-matches">Matches: ${game.matches}</span>
+                    <span class="game-result ${resultClass}">₹${game.winnings}</span>
+                `;
+                
+                recentGamesList.prepend(gameElement);
+                
+                // Keep only the last 5 games
+                const games = recentGamesList.querySelectorAll('.recent-game');
+                if (games.length > 5) {
+                    recentGamesList.removeChild(games[games.length - 1]);
+                }
+            }
+            
+            // Fetch recent games on page load
+            fetch('/keno/recent')
+                .then(response => response.json())
+                .then(data => {
+                    data.games.forEach(game => {
+                        addToRecentGames(game);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching recent games:', error);
+                });
+        });
+    </script>
+</body>
+</html>

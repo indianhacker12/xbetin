@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine Betting History - XBet</title>
+    <style>
+        :root {
+            --primary-color: #4a00e0;
+            --secondary-color: #8e2de2;
+            --accent-color: #ff6b6b;
+            --background-color: #1a1a2e;
+            --card-color: #16213e;
+            --text-color: #f1f1f1;
+            --border-color: #30475e;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .history-table th, .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .history-table th {
+            background-color: rgba(74, 0, 224, 0.2);
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .history-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .win {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .lose {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+        
+        .no-history {
+            text-align: center;
+            padding: 30px;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+        
+        .navigation-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: var(--card-color);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .history-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .history-table th, .history-table td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Mine Betting History</div>
+        
+        {% if history %}
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Bet Amount</th>
+                    <th>Grid Size</th>
+                    <th>Mines</th>
+                    <th>Cells Revealed</th>
+                    <th>Multiplier</th>
+                    <th>Result</th>
+                    <th>Winnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in history %}
+                <tr>
+                    <td>{{ game.timestamp }}</td>
+                    <td>₹{{ game.bet_amount }}</td>
+                    <td>{{ game.grid_size }}x{{ game.grid_size }}</td>
+                    <td>{{ game.mines_count }}</td>
+                    <td>{{ game.cells_revealed }}</td>
+                    <td>{{ game.multiplier }}x</td>
+                    <td class="{{ game.result }}">{{ game.result|upper }}</td>
+                    <td>₹{{ game.winnings }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-history">
+            <p>You haven't played any Mine Betting games yet.</p>
+        </div>
+        {% endif %}
+        
+        <div class="navigation-links">
+            <a href="/mine-betting" class="nav-link">Back to Game</a>
+            <a href="/home" class="nav-link">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine Betting - XBet</title>
+    <style>
+        :root {
+            --primary-color: #4a00e0;
+            --secondary-color: #8e2de2;
+            --accent-color: #ff6b6b;
+            --background-color: #1a1a2e;
+            --card-color: #16213e;
+            --text-color: #f1f1f1;
+            --border-color: #30475e;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .balance-info {
+            font-size: 1.2rem;
+            background-color: var(--card-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .game-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            font-size: 1rem;
+            color: #ccc;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        input[type="number"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: #2a2a4a;
+            color: var(--text-color);
+            font-size: 1rem;
+            width: 100%;
+            max-width: 150px;
+        }
+        
+        .quick-amount {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: #2a2a4a;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-amount:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .grid-size-option, .mines-option {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: #2a2a4a;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .grid-size-option.selected, .mines-option.selected {
+            background-color: var(--primary-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .cell {
+            aspect-ratio: 1/1;
+            background-color: var(--card-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cell:hover:not(.revealed):not(.disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        
+        .cell.revealed {
+            background-color: #2a2a4a;
+        }
+        
+        .cell.mine {
+            background-color: var(--danger-color);
+        }
+        
+        .cell.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .multiplier-display {
+            background-color: var(--card-color);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .multiplier-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .multiplier-label {
+            font-size: 1rem;
+            color: #ccc;
+        }
+        
+        .game-result {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+        
+        .result-header {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-win {
+            color: var(--success-color);
+        }
+        
+        .result-lose {
+            color: var(--danger-color);
+        }
+        
+        .result-details {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .navigation-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: var(--card-color);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .game-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .game-grid {
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Animation for revealing cells */
+        @keyframes reveal {
+            0% {
+                transform: rotateY(0deg);
+            }
+            50% {
+                transform: rotateY(90deg);
+            }
+            100% {
+                transform: rotateY(0deg);
+            }
+        }
+        
+        .cell.revealing {
+            animation: reveal 0.5s ease;
+        }
+        
+        /* Animation for win/lose */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .pulsing {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">XBet Mine Betting</div>
+        
+        <div class="game-info">
+            <div class="balance-info">
+                Balance: ₹<span id="wallet-balance">{{ balance }}</span>
+            </div>
+        </div>
+        
+        <div class="game-controls" id="game-setup">
+            <div class="control-group">
+                <label for="bet-amount">Bet Amount</label>
+                <div class="control-row">
+                    <input type="number" id="bet-amount" min="10" step="10" value="10">
+                    <button class="quick-amount" data-amount="10">₹10</button>
+                    <button class="quick-amount" data-amount="50">₹50</button>
+                    <button class="quick-amount" data-amount="100">₹100</button>
+                    <button class="quick-amount" data-amount="500">₹500</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Grid Size</label>
+                <div class="control-row">
+                    <button class="grid-size-option" data-size="3">3x3</button>
+                    <button class="grid-size-option selected" data-size="5">5x5</button>
+                    <button class="grid-size-option" data-size="8">8x8</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Number of Mines</label>
+                <div class="control-row">
+                    <button class="mines-option" data-mines="1">1</button>
+                    <button class="mines-option selected" data-mines="3">3</button>
+                    <button class="mines-option" data-mines="5">5</button>
+                    <button class="mines-option" data-mines="10">10</button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="start-game" class="btn btn-primary">Start Game</button>
+            </div>
+        </div>
+        
+        <div id="game-area" style="display: none;">
+            <div class="multiplier-display">
+                <div class="multiplier-label">Current Multiplier</div>
+                <div class="multiplier-value" id="current-multiplier">1.00x</div>
+            </div>
+            
+            <div class="game-grid" id="game-grid">
+                <!-- Grid cells will be generated dynamically -->
+            </div>
+            
+            <div class="action-buttons">
+                <button id="cashout" class="btn btn-success">Cash Out</button>
+            </div>
+        </div>
+        
+        <div id="game-result" class="game-result">
+            <div class="result-header" id="result-header"></div>
+            <div class="result-details" id="result-details"></div>
+            <button id="play-again" class="btn btn-primary">Play Again</button>
+        </div>
+        
+        <div class="navigation-links">
+            <a href="/home" class="nav-link">Back to Home</a>
+            <a href="/mine-betting/history" class="nav-link">View History</a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const walletBalanceElement = document.getElementById('wallet-balance');
+            const betAmountInput = document.getElementById('bet-amount');
+            const startGameButton = document.getElementById('start-game');
+            const cashoutButton = document.getElementById('cashout');
+            const playAgainButton = document.getElementById('play-again');
+            const gameSetupElement = document.getElementById('game-setup');
+            const gameAreaElement = document.getElementById('game-area');
+            const gameResultElement = document.getElementById('game-result');
+            const gameGridElement = document.getElementById('game-grid');
+            const currentMultiplierElement = document.getElementById('current-multiplier');
+            const resultHeaderElement = document.getElementById('result-header');
+            const resultDetailsElement = document.getElementById('result-details');
+            
+            // Game state
+            let gridSize = 5;
+            let minesCount = 3;
+            let gameActive = false;
+            let revealedCells = [];
+            let currentMultiplier = 1.0;
+            
+            // Initialize
+            document.querySelectorAll('.quick-amount').forEach(button => {
+                button.addEventListener('click', function() {
+                    betAmountInput.value = this.dataset.amount;
+                });
+            });
+            
+            document.querySelectorAll('.grid-size-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.grid-size-option').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    gridSize = parseInt(this.dataset.size);
+                    
+                    // Update mines options based on grid size
+                    updateMinesOptions();
+                });
+            });
+            
+            document.querySelectorAll('.mines-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.mines-option').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    minesCount = parseInt(this.dataset.mines);
+                });
+            });
+            
+            function updateMinesOptions() {
+                const maxMines = Math.floor((gridSize * gridSize) / 2) - 1;
+                document.querySelectorAll('.mines-option').forEach(button => {
+                    const mines = parseInt(button.dataset.mines);
+                    if (mines > maxMines) {
+                        button.style.display = 'none';
+                    } else {
+                        button.style.display = 'block';
+                    }
+                });
+                
+                // If selected mines count is now invalid, select the highest valid option
+                if (minesCount > maxMines) {
+                    document.querySelectorAll('.mines-option').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    const highestValidOption = document.querySelector(`.mines-option[data-mines="${maxMines}"]`);
+                    if (highestValidOption) {
+                        highestValidOption.classList.add('selected');
+                        minesCount = maxMines;
+                    }
+                }
+            }
+            
+            startGameButton.addEventListener('click', startGame);
+            cashoutButton.addEventListener('click', cashout);
+            playAgainButton.addEventListener('click', resetGame);
+            
+            function startGame() {
+                const betAmount = parseFloat(betAmountInput.value);
+                
+                if (isNaN(betAmount) || betAmount <= 0) {
+                    alert('Please enter a valid bet amount');
+                    return;
+                }
+                
+                // Send request to start game
+                fetch('/mine-betting/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bet_amount: betAmount,
+                        grid_size: gridSize,
+                        mines_count: minesCount
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update wallet balance
+                        walletBalanceElement.textContent = data.new_balance.toFixed(2);
+                        
+                        // Initialize game grid
+                        initializeGrid(data.grid_size);
+                        
+                        // Show game area
+                        gameSetupElement.style.display = 'none';
+                        gameAreaElement.style.display = 'block';
+                        gameResultElement.style.display = 'none';
+                        
+                        // Set game as active
+                        gameActive = true;
+                        revealedCells = [];
+                        currentMultiplier = 1.0;
+                        currentMultiplierElement.textContent = currentMultiplier.toFixed(2) + 'x';
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error starting game:', error);
+                    alert('Failed to start game. Please try again.');
+                });
+            }
+            
+            function initializeGrid(size) {
+                // Clear existing grid
+                gameGridElement.innerHTML = '';
+                
+                // Set grid columns
+                gameGridElement.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+                
+                // Create cells
+                for (let i = 0; i < size * size; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.position = i;
+                    
+                    cell.addEventListener('click', function() {
+                        if (gameActive && !this.classList.contains('revealed') && !this.classList.contains('disabled')) {
+                            revealCell(i);
+                        }
+                    });
+                    
+                    gameGridElement.appendChild(cell);
+                }
+            }
+            
+            function revealCell(position) {
+                if (!gameActive) return;
+                
+                // Send request to reveal cell
+                fetch('/mine-betting/reveal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        position: position
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const cell = document.querySelector(`.cell[data-position="${position}"]`);
+                        
+                        // Add animation class
+                        cell.classList.add('revealing');
+                        
+                        // After animation completes
+                        setTimeout(() => {
+                            cell.classList.remove('revealing');
+                            cell.classList.add('revealed');
+                            
+                            if (data.hit_mine) {
+                                // Show mine
+                                cell.classList.add('mine');
+                                cell.innerHTML = '💣';
+                            } else {
+                                // Show gem
+                                cell.innerHTML = '💎';
+                            }
+                            
+                            // Update multiplier
+                            currentMultiplier = data.multiplier;
+                            currentMultiplierElement.textContent = currentMultiplier.toFixed(2) + 'x';
+                            
+                            // Add to revealed cells
+                            revealedCells.push(position);
+                            
+                            // Check if game is over
+                            if (data.game_over) {
+                                gameActive = false;
+                                
+                                // Show all mines
+                                if (data.mine_positions) {
+                                    data.mine_positions.forEach(pos => {
+                                        if (!revealedCells.includes(pos)) {
+                                            const mineCell = document.querySelector(`.cell[data-position="${pos}"]`);
+                                            mineCell.classList.add('mine');
+                                            mineCell.innerHTML = '💣';
+                                        }
+                                    });
+                                }
+                                
+                                // Disable all cells
+                                document.querySelectorAll('.cell').forEach(cell => {
+                                    cell.classList.add('disabled');
+                                });
+                                
+                                // Update wallet balance
+                                if (data.new_balance !== undefined) {
+                                    walletBalanceElement.textContent = data.new_balance.toFixed(2);
+                                }
+                                
+                                // Show result
+                                showGameResult(data.result, data.winnings);
+                            }
+                        }, 500); // Match the animation duration
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error revealing cell:', error);
+                    alert('Failed to reveal cell. Please try again.');
+                });
+            }
+            
+            function cashout() {
+                if (!gameActive) return;
+                
+                // Send request to cash out
+                fetch('/mine-betting/cashout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        gameActive = false;
+                        
+                        // Show all mines
+                        if (data.mine_positions) {
+                            data.mine_positions.forEach(pos => {
+                                if (!revealedCells.includes(pos)) {
+                                    const mineCell = document.querySelector(`.cell[data-position="${pos}"]`);
+                                    mineCell.classList.add('mine');
+                                    mineCell.innerHTML = '💣';
+                                }
+                            });
+                        }
+                        
+                        // Disable all cells
+                        document.querySelectorAll('.cell').forEach(cell => {
+                            cell.classList.add('disabled');
+                        });
+                        
+                        // Update wallet balance
+                        walletBalanceElement.textContent = data.new_balance.toFixed(2);
+                        
+                        // Show result
+                        showGameResult(data.result, data.winnings);
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cashing out:', error);
+                    alert('Failed to cash out. Please try again.');
+                });
+            }
+            
+            function showGameResult(result, winnings) {
+                resultHeaderElement.textContent = result === 'win' ? 'You Won!' : 'You Lost!';
+                resultHeaderElement.className = result === 'win' ? 'result-header result-win' : 'result-header result-lose';
+                
+                if (result === 'win') {
+                    resultDetailsElement.textContent = `You won ₹${winnings.toFixed(2)} with a ${currentMultiplier.toFixed(2)}x multiplier!`;
+                    resultHeaderElement.classList.add('pulsing');
+                } else {
+                    resultDetailsElement.textContent = 'Better luck next time!';
+                }
+                
+                gameResultElement.style.display = 'block';
+            }
+            
+            function resetGame() {
+                // Reset game state
+                gameActive = false;
+                revealedCells = [];
+                currentMultiplier = 1.0;
+                
+                // Show setup screen
+                gameSetupElement.style.display = 'flex';
+                gameAreaElement.style.display = 'none';
+                gameResultElement.style.display = 'none';
+                
+                // Remove pulsing animation
+                resultHeaderElement.classList.remove('pulsing');
+            }
+        });
+    </script>
+</body>
+</html> 

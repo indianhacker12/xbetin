@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dice Game History</title>
+</head>
+<body>
+    <h1>Your Dice Game History</h1>
+    <table border="1">
+        <tr>
+            <th>Bet Amount</th>
+            <th>Your Choice</th>
+            <th>Dice Roll</th>
+            <th>Result</th>
+            <th>Time</th>
+        </tr>
+        {% for game in games %}
+        <tr>
+            <td>{{ game.bet_amount }}</td>
+            <td>{{ game.user_choice }}</td>
+            <td>{{ game.dice_roll }}</td>
+            <td>{{ game.result }}</td>
+            <td>{{ game.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/dice">Back to Game</a>
+</body>
+</html>

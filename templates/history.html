@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game History</title>
+</head>
+<body>
+    <h1>Your Game History</h1>
+    <table border="1">
+        <tr>
+            <th>Bet Amount</th>
+            <th>Your Choice</th>
+            <th>Computer's Choice</th>
+            <th>Result</th>
+            <th>Time</th>
+        </tr>
+        {% for game in games %}
+        <tr>
+            <td>{{ game.bet_amount }}</td>
+            <td>{{ game.user_choice }}</td>
+            <td>{{ game.computer_choice }}</td>
+            <td>{{ game.result }}</td>
+            <td>{{ game.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/play">Back to Game</a>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keno Game Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Keno Game Result</h1>
+    <p>Your Numbers: {{ user_numbers }}</p>
+    <p>Generated Numbers: {{ generated_numbers }}</p>
+    <p>Matches: {{ matches }}</p>
+    <p>Winnings: ₹{{ winnings }}</p>
+    <p>New Wallet Balance: ₹{{ balance }}</p>
+    <a href="/keno">Play Again</a>
+    <a href="/keno/history">View History</a>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="/static/css/rock.css">
+</head>
+<body>
+    <h1>Rock Paper & Scissors</h1>
+    <p>Wallet Balance: ₹{{ balance }}</p>
+    <form method="POST">
+        <label for="bet_amount">Bet Amount:</label>
+        <input type="number" name="bet_amount" required>
+        <br>
+        <label for="user_choice">Choose:</label>
+        <select name="user_choice" required>
+            <option value="rock">Rock</option>
+            <option value="paper">Paper</option>
+            <option value="scissors">Scissors</option>
+        </select>
+        <br>
+        <button type="submit">Play</button>
+    </form>
+</body>
+</html>

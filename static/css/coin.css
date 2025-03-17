@@ -37,7 +37,7 @@ h1 {
     transition: transform 0.3s;
 }
 .heads {
-    background-image: url('/static/img/head.png'); /* Replace with online coin heads image */
+    background-image: url('/static/img/head.png'); /*Replace with online coin heads image */
     background-size: cover;
     transform: rotateY(0deg);
 }

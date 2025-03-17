@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Prediction Result</title>
+    <link rel="stylesheet" href="/static/css/color_prediction.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Color Prediction Result</h1>
+        
+        <div class="result-container">
+            <div class="result-animation">
+                <div class="big-color-circle {{ winning_color }}"></div>
+            </div>
+            
+            <div class="result-details">
+                <div class="result-row">
+                    <span class="result-label">Your Choice:</span>
+                    <span class="result-value">
+                        <span class="color-badge {{ user_choice }}">{{ user_choice|upper }}</span>
+                    </span>
+                </div>
+                
+                <div class="result-row">
+                    <span class="result-label">Winning Color:</span>
+                    <span class="result-value">
+                        <span class="color-badge {{ winning_color }}">{{ winning_color|upper }}</span>
+                    </span>
+                </div>
+                
+                <div class="result-row">
+                    <span class="result-label">Result:</span>
+                    <span class="result-value {{ 'win' if result == 'win' else 'lose' }}">
+                        {{ 'WIN' if result == 'win' else 'LOSS' }}
+                    </span>
+                </div>
+                
+                {% if result == 'win' %}
+                <div class="result-row">
+                    <span class="result-label">Winnings:</span>
+                    <span class="result-value win">+₹{{ winnings }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="result-row">
+                    <span class="result-label">New Balance:</span>
+                    <span class="result-value">₹{{ balance }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation-links">
+            <a href="/color-prediction" class="button primary">Play Again</a>
+            <a href="/color-prediction/history" class="button secondary">View History</a>
+            <a href="/home" class="button secondary">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html> 

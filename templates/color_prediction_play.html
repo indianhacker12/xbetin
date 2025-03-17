@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Prediction Game</title>
+    <link rel="stylesheet" href="/static/css/color_prediction.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Color Prediction Game</h1>
+        
+        <div class="game-info">
+            <p class="balance">Wallet Balance: ₹<span id="wallet-balance">{{ balance }}</span></p>
+            <div class="timer-container">
+                <p>Next Round: <span id="timer">30</span>s</p>
+                <div class="progress-bar">
+                    <div class="progress" id="timer-progress"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="color-wheel-container">
+            <div class="color-wheel" id="color-wheel">
+                <div class="wheel-segment red"></div>
+                <div class="wheel-segment green"></div>
+                <div class="wheel-segment blue"></div>
+                <div class="wheel-pointer"></div>
+            </div>
+            <div class="last-results">
+                <h3>Last 10 Results</h3>
+                <div class="result-circles" id="result-history">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="betting-section">
+            <div class="bet-amount-section">
+                <h3>Bet Amount</h3>
+                <div class="bet-options">
+                    <button class="bet-option" data-amount="10">₹10</button>
+                    <button class="bet-option" data-amount="50">₹50</button>
+                    <button class="bet-option" data-amount="100">₹100</button>
+                    <button class="bet-option" data-amount="500">₹500</button>
+                    <button class="bet-option" data-amount="1000">₹1000</button>
+                </div>
+                <div class="custom-bet">
+                    <input type="number" id="bet-amount" min="10" step="10" value="50">
+                </div>
+            </div>
+            
+            <div class="color-options">
+                <div class="color-option red" data-color="red" data-multiplier="2">
+                    <div class="color-circle"></div>
+                    <div class="color-info">
+                        <p class="color-name">RED</p>
+                        <p class="multiplier">2x</p>
+                    </div>
+                </div>
+                <div class="color-option green" data-color="green" data-multiplier="2">
+                    <div class="color-circle"></div>
+                    <div class="color-info">
+                        <p class="color-name">GREEN</p>
+                        <p class="multiplier">2x</p>
+                    </div>
+                </div>
+                <div class="color-option blue" data-color="blue" data-multiplier="2">
+                    <div class="color-circle"></div>
+                    <div class="color-info">
+                        <p class="color-name">BLUE</p>
+                        <p class="multiplier">2x</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="place-bet-button" class="button primary">Place Bet</button>
+        </div>
+        
+        <div class="bet-slip" id="bet-slip">
+            <h3>Your Bets</h3>
+            <div id="active-bets">
+                <!-- Will be populated by JavaScript -->
+                <p class="empty-bets">No active bets</p>
+            </div>
+            <div class="total-section">
+                <p>Total Bet: ₹<span id="total-bet">0</span></p>
+                <p>Potential Win: ₹<span id="potential-win">0</span></p>
+            </div>
+        </div>
+        
+        <div class="navigation-links">
+            <a href="/color-prediction/history" class="nav-link">View History</a>
+            <a href="/home" class="nav-link">Back to Home</a>
+        </div>
+    </div>
+    
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Round Result</h2>
+            <div class="result-animation">
+                <div class="big-color-circle" id="result-color"></div>
+            </div>
+            <div id="result-message"></div>
+            <div id="winnings-display"></div>
+            <button id="continue-button" class="button primary">Continue</button>
+        </div>
+    </div>
+    
+    <div id="bet-success-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button bet-success-close">&times;</span>
+            <h2>Bet Placed Successfully!</h2>
+            <p>Your bet has been placed. Good luck!</p>
+            <div id="bet-details"></div>
+            <button class="bet-success-close button primary">OK</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const walletBalanceElement = document.getElementById('wallet-balance');
+            const timerElement = document.getElementById('timer');
+            const timerProgressElement = document.getElementById('timer-progress');
+            const betAmountInput = document.getElementById('bet-amount');
+            const betOptions = document.querySelectorAll('.bet-option');
+            const colorOptions = document.querySelectorAll('.color-option');
+            const placeBetButton = document.getElementById('place-bet-button');
+            const activeBetsElement = document.getElementById('active-bets');
+            const totalBetElement = document.getElementById('total-bet');
+            const potentialWinElement = document.getElementById('potential-win');
+            const resultHistoryElement = document.getElementById('result-history');
+            const colorWheel = document.getElementById('color-wheel');
+            const modal = document.getElementById('result-modal');
+            const betSuccessModal = document.getElementById('bet-success-modal');
+            const closeButton = document.querySelector('.close-button');
+            const betSuccessCloseButtons = document.querySelectorAll('.bet-success-close');
+            const continueButton = document.getElementById('continue-button');
+            
+            // Game state
+            let timerValue = 30;
+            let timerInterval;
+            let activeBets = [];
+            let totalBet = 0;
+            let potentialWin = 0;
+            let gameHistory = [];
+            let isSpinning = false;
+            let selectedColor = null;
+            
+            // Initialize
+            startTimer();
+            fetchGameHistory();
+            
+            // Bet option buttons
+            betOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    betAmountInput.value = this.dataset.amount;
+                    betOptions.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Color selection
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (timerValue < 5) {
+                        alert('Betting closed for this round!');
+                        return;
+                    }
+                    
+                    // Remove active class from all color options
+                    colorOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to selected color
+                    this.classList.add('active');
+                    
+                    // Store selected color
+                    selectedColor = this.dataset.color;
+                });
+            });
+            
+            // Place bet button
+            placeBetButton.addEventListener('click', function() {
+                if (timerValue < 5) {
+                    alert('Betting closed for this round!');
+                    return;
+                }
+                
+                if (!selectedColor) {
+                    alert('Please select a color first!');
+                    return;
+                }
+                
+                const betAmount = parseInt(betAmountInput.value);
+                if (isNaN(betAmount) || betAmount < 10) {
+                    alert('Please enter a valid bet amount (minimum ₹10)');
+                    return;
+                }
+                
+                const walletBalance = parseFloat(walletBalanceElement.textContent);
+                if (betAmount > walletBalance) {
+                    alert('Insufficient balance!');
+                    return;
+                }
+                
+                const multiplier = 2; // 2x for all colors
+                
+                // Check if already bet on this color
+                const existingBetIndex = activeBets.findIndex(bet => bet.color === selectedColor);
+                if (existingBetIndex !== -1) {
+                    // Update existing bet
+                    activeBets[existingBetIndex].amount += betAmount;
+                } else {
+                    // Add new bet
+                    activeBets.push({
+                        color: selectedColor,
+                        amount: betAmount,
+                        multiplier: multiplier
+                    });
+                }
+                
+                // Update wallet balance
+                walletBalanceElement.textContent = (walletBalance - betAmount).toFixed(2);
+                
+                // Update bet slip
+                updateBetSlip();
+                
+                // Send bet to server
+                placeBet(selectedColor, betAmount, multiplier);
+                
+                // Show success message
+                showBetSuccessMessage(selectedColor, betAmount);
+                
+                // Reset selection
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                selectedColor = null;
+            });
+            
+            // Show bet success message
+            function showBetSuccessMessage(color, amount) {
+                const betDetailsElement = document.getElementById('bet-details');
+                betDetailsElement.innerHTML = `
+                    <div class="bet-success-details">
+                        <p>Color: <span class="color-badge ${color}">${color.toUpperCase()}</span></p>
+                        <p>Amount: ₹${amount}</p>
+                        <p>Potential Win: ₹${amount * 2}</p>
+                    </div>
+                `;
+                betSuccessModal.style.display = 'block';
+            }
+            
+            // Close bet success modal
+            betSuccessCloseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    betSuccessModal.style.display = 'none';
+                });
+            });
+            
+            // Update bet slip display
+            function updateBetSlip() {
+                if (activeBets.length === 0) {
+                    activeBetsElement.innerHTML = '<p class="empty-bets">No active bets</p>';
+                    totalBet = 0;
+                    potentialWin = 0;
+                } else {
+                    activeBetsElement.innerHTML = '';
+                    totalBet = 0;
+                    potentialWin = 0;
+                    
+                    activeBets.forEach(bet => {
+                        const betElement = document.createElement('div');
+                        betElement.className = `bet-item ${bet.color}`;
+                        betElement.innerHTML = `
+                            <div class="bet-color-indicator"></div>
+                            <div class="bet-details">
+                                <p>${bet.color.toUpperCase()}</p>
+                                <p>₹${bet.amount} (${bet.multiplier}x)</p>
+                            </div>
+                        `;
+                        activeBetsElement.appendChild(betElement);
+                        
+                        totalBet += bet.amount;
+                        potentialWin += bet.amount * bet.multiplier;
+                    });
+                }
+                
+                totalBetElement.textContent = totalBet;
+                potentialWinElement.textContent = potentialWin.toFixed(2);
+            }
+            
+            // Place bet on server
+            function placeBet(color, betAmount, multiplier) {
+                fetch('/place_bet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: 'Color',
+                        value: color,
+                        betAmount: betAmount,
+                        multiplier: multiplier
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Error placing bet: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            
+            // Timer functions
+            function startTimer() {
+                timerValue = 30;
+                updateTimerDisplay();
+                
+                timerInterval = setInterval(() => {
+                    timerValue--;
+                    updateTimerDisplay();
+                    
+                    if (timerValue === 5) {
+                        // Betting closed
+                        colorOptions.forEach(option => {
+                            option.classList.add('disabled');
+                        });
+                        placeBetButton.disabled = true;
+                        placeBetButton.classList.add('disabled');
+                    }
+                    
+                    if (timerValue === 0) {
+                        clearInterval(timerInterval);
+                        spinWheel();
+                    }
+                }, 1000);
+            }
+            
+            function updateTimerDisplay() {
+                timerElement.textContent = timerValue;
+                const progressPercent = (timerValue / 30) * 100;
+                timerProgressElement.style.width = `${progressPercent}%`;
+                
+                if (timerValue <= 5) {
+                    timerProgressElement.classList.add('urgent');
+                } else {
+                    timerProgressElement.classList.remove('urgent');
+                }
+            }
+            
+            // Spin the wheel and show result
+            function spinWheel() {
+                if (isSpinning) return;
+                isSpinning = true;
+                
+                // Get a random color (in a real implementation, this would come from the server)
+                const colors = ['red', 'green', 'blue'];
+                const winningColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Animate wheel
+                colorWheel.classList.add('spinning');
+                
+                // After animation, show result
+                setTimeout(() => {
+                    colorWheel.classList.remove('spinning');
+                    showResult(winningColor);
+                    isSpinning = false;
+                }, 3000);
+            }
+            
+            // Show result modal
+            function showResult(winningColor) {
+                // Update history
+                updateGameHistory(winningColor);
+                
+                // Calculate winnings
+                let totalWinnings = 0;
+                let wonAnyBet = false;
+                
+                activeBets.forEach(bet => {
+                    if (bet.color === winningColor) {
+                        totalWinnings += bet.amount * bet.multiplier;
+                        wonAnyBet = true;
+                    }
+                });
+                
+                // Show modal with result
+                const resultColorElement = document.getElementById('result-color');
+                resultColorElement.className = `big-color-circle ${winningColor}`;
+                
+                const resultMessageElement = document.getElementById('result-message');
+                const winningsDisplayElement = document.getElementById('winnings-display');
+                
+                if (wonAnyBet) {
+                    resultMessageElement.innerHTML = `<p class="win-message">You Won!</p>`;
+                    winningsDisplayElement.innerHTML = `<p class="winnings">+₹${totalWinnings.toFixed(2)}</p>`;
+                    
+                    // Update wallet balance
+                    const currentBalance = parseFloat(walletBalanceElement.textContent);
+                    walletBalanceElement.textContent = (currentBalance + totalWinnings).toFixed(2);
+                } else {
+                    resultMessageElement.innerHTML = `<p class="lose-message">Better luck next time!</p>`;
+                    winningsDisplayElement.innerHTML = '';
+                }
+                
+                modal.style.display = 'block';
+                
+                // Reset for next round
+                activeBets = [];
+                updateBetSlip();
+            }
+            
+            // Update game history display
+            function updateGameHistory(newColor) {
+                gameHistory.unshift(newColor);
+                if (gameHistory.length > 10) {
+                    gameHistory.pop();
+                }
+                
+                resultHistoryElement.innerHTML = '';
+                gameHistory.forEach(color => {
+                    const circleElement = document.createElement('div');
+                    circleElement.className = `result-circle ${color}`;
+                    resultHistoryElement.appendChild(circleElement);
+                });
+            }
+            
+            // Fetch game history from server
+            function fetchGameHistory() {
+                fetch('/get_bet_history')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.bet_history && data.bet_history.length > 0) {
+                            const colorHistory = data.bet_history
+                                .filter(bet => bet.type === 'Color')
+                                .slice(0, 10)
+                                .map(bet => bet.value.toLowerCase());
+                            
+                            gameHistory = colorHistory;
+                            
+                            resultHistoryElement.innerHTML = '';
+                            gameHistory.forEach(color => {
+                                const circleElement = document.createElement('div');
+                                circleElement.className = `result-circle ${color}`;
+                                resultHistoryElement.appendChild(circleElement);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching history:', error);
+                    });
+            }
+            
+            // Modal controls
+            closeButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+                resetGame();
+            });
+            
+            continueButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+                resetGame();
+            });
+            
+            // Reset game for next round
+            function resetGame() {
+                colorOptions.forEach(option => {
+                    option.classList.remove('disabled');
+                });
+                placeBetButton.disabled = false;
+                placeBetButton.classList.remove('disabled');
+                startTimer();
+            }
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    resetGame();
+                }
+                if (event.target === betSuccessModal) {
+                    betSuccessModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

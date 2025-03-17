@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dice Betting Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dice1.css') }}">
+
+</head>
+<body>
+    <h1>Dice Betting Game</h1>
+    <p>Wallet Balance: ₹{{ balance }}</p>
+    <form method="POST">
+        <label for="bet_amount">Bet Amount:</label>
+        <input type="number" name="bet_amount" required>
+        <br>
+        <label for="user_choice">Choose a Number (1-6):</label>
+        <select name="user_choice" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <br>
+        <button type="submit">Roll the Dice</button>
+    </form>
+</body>
+</html>

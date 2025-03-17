@@ -1,116 +1,210 @@
 
-let gameId = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
-let walletBalance = 1000;
-let selectedColor = '';
+let balance = 500.00;
+let countdown = 30;
 let timerInterval;
-const colors = ['Red', 'Green', 'Violet'];
-const payouts = { 'Red': 1.97, 'Green': 1.97, 'Violet': 4.5 };
+let bets = []; // Array to store multiple bets
 
-document.getElementById('game-id').textContent = gameId;
-document.getElementById('wallet-balance').textContent = walletBalance;
-
+// Start countdown timer
 function startTimer() {
-    let timeRemaining = 30;
-    document.getElementById('timer').textContent = formatTime(timeRemaining);
-
+    countdown = 30;
+    document.getElementById("timer").innerText = countdown;
     timerInterval = setInterval(() => {
-        timeRemaining--;
-        document.getElementById('timer').textContent = formatTime(timeRemaining);
-
-        if (timeRemaining <= 0) {
+        countdown--;
+        document.getElementById("timer").innerText = countdown;
+        if (countdown === 5) disableBetting();
+        if (countdown <= 0) {
             clearInterval(timerInterval);
-            runGame();
-            startNewRound();
+            evaluateBets();
+            resetGame();
         }
     }, 1000);
 }
 
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+// Place a bet selection
+function placeBet(game, option, multiplier) {
+const betAmount = parseFloat(document.getElementById("betAmount").value);
+if (isNaN(betAmount) || betAmount <= 0) {
+alert("Please enter a valid bet amount!");
+return;
 }
 
-function runGame() {
-    const winningColor = colors[Math.floor(Math.random() * colors.length)];
-    let resultMessage = 'You lost!';
-    let resultColor = 'red';
+// Send a request to the backend
+fetch('/place_bet', {
+method: 'POST',
+headers: {
+    'Content-Type': 'application/json',
+},
+body: JSON.stringify({
+    user_id: 1,  // Pass actual user ID here
+    game: game,
+    option: option,
+    multiplier: multiplier,
+    bet_amount: betAmount
+})
+})
+.then(response => response.json())
+.then(data => {
+if (data.error) {
+    alert(data.error);
+} else {
+    document.getElementById("balance").innerText = data.balance.toFixed(2);
+    alert(`You ${data.result}! Winnings: ${data.winnings.toFixed(2)}. Winning option: ${data.winning_option}`);
+}
+})
+.catch(error => console.error('Error:', error));
+}
+function placeBet(game, option, multiplier) {
+const betAmount = parseFloat(document.getElementById("betAmount").value);
+if (isNaN(betAmount) || betAmount <= 0) {
+alert("Please enter a valid bet amount!");
+return;
+}
 
-    if (selectedColor === winningColor) {
-        walletBalance += parseFloat(document.getElementById('bet-amount').value) * payouts[winningColor];
-        resultMessage = 'You won!';
-        resultColor = 'green';
-    } else {
-        walletBalance -= parseFloat(document.getElementById('bet-amount').value);
+// Send a request to the backend
+fetch('/place_bet', {
+method: 'POST',
+headers: {
+    'Content-Type': 'application/json',
+},
+body: JSON.stringify({
+    user_id: 1,  // Pass actual user ID here
+    game: game,
+    option: option,
+    multiplier: multiplier,
+    bet_amount: betAmount
+})
+})
+.then(response => response.json())
+.then(data => {
+if (data.error) {
+    alert(data.error);
+} else {
+    document.getElementById("balance").innerText = data.balance.toFixed(2);
+    alert(`You ${data.result}! Winnings: ${data.winnings.toFixed(2)}. Winning option: ${data.winning_option}`);
+}
+})
+.catch(error => console.error('Error:', error));
+}
+
+function fetchBalance() {
+fetch('/get_balance/1')  // Pass actual user ID here
+.then(response => response.json())
+.then(data => {
+if (data.balance) {
+    document.getElementById("balance").innerText = data.balance.toFixed(2);
+}
+})
+.catch(error => console.error('Error:', error));
+}
+
+// Call fetchBalance on page load
+document.addEventListener("DOMContentLoaded", function() {
+fetchBalance();
+});
+
+// Confirm placing bets
+function confirmBet() {
+    if (bets.length === 0) {
+        alert("Please place at least one bet.");
+        return;
     }
 
-    document.getElementById('wallet-balance').textContent = walletBalance;
-    document.getElementById('message').textContent = resultMessage;
-    document.getElementById('message').style.color = resultColor;
+    // Deduct the total amount of all placed bets from the balance
+    let totalBetAmount = 0;
+    bets.forEach(bet => totalBetAmount += bet.amount);
+    if (totalBetAmount > balance) {
+        alert("Insufficient balance to place all bets!");
+        return;
+    }
 
-    addToHistory(winningColor, resultMessage);
+    balance -= totalBetAmount;
+    updateBalance();
+    alert(`You placed ${bets.length} bets for a total of ${totalBetAmount.toFixed(2)}`);
 }
 
-function addToHistory(winningColor, result) {
-    const historyTable = document.getElementById('history');
-    const row = document.createElement('tr');
-    const period = document.createElement('td');
-    const color = document.createElement('td');
-    const resultCell = document.createElement('td');
-    const timeCell = document.createElement('td');
-    const colorBox = document.createElement('td');
-
-    period.textContent = gameId;
-    color.textContent = winningColor;
-    resultCell.textContent = result;
-    timeCell.textContent = new Date().toLocaleTimeString();
-
-    colorBox.style.backgroundColor = winningColor.toLowerCase();
-    colorBox.classList.add('color-box');
-
-    row.appendChild(period);
-    row.appendChild(color);
-    row.appendChild(colorBox);
-    row.appendChild(resultCell);
-    row.appendChild(timeCell);
-    historyTable.appendChild(row);
-}
-
-function resetGame() {
-    gameId = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
-    document.getElementById('game-id').textContent = gameId;
-    selectedColor = '';
-    document.getElementById('bet-amount').value = 10;
-}
-
-function selectColor(color) {
-    selectedColor = color;
-    document.querySelectorAll('.color').forEach(button => {
-        button.style.border = 'none';
+// Disable betting in the last 5 seconds
+function disableBetting() {
+    document.querySelectorAll(".option").forEach(option => {
+        option.style.pointerEvents = "none";
+        option.style.opacity = "0.5";
     });
-    document.querySelector(`.color.${color.toLowerCase()}`).style.border = '2px solid #fff';
 }
 
-function placeBet() {
-    const betAmount = parseFloat(document.getElementById('bet-amount').value);
-    if (isNaN(betAmount) || betAmount <= 0 || betAmount > walletBalance) {
-        alert('Please enter a valid bet amount.');
-        return;
-    }
-    if (!selectedColor) {
-        alert('Please select a color.');
-        return;
-    }
-
-    document.getElementById('message').textContent = 'Bet placed! Waiting for the result...';
-    document.getElementById('message').style.color = '#000';
+// Enable betting
+function enableBetting() {
+    document.querySelectorAll(".option").forEach(option => {
+        option.style.pointerEvents = "auto";
+        option.style.opacity = "1";
+    });
 }
 
-function startNewRound() {
-    resetGame();
+// Evaluate the results of all placed bets
+function evaluateBets() {
+    if (bets.length === 0) {
+        alert("No bets placed.");
+        return;
+    }
+
+    const colorOutcomes = ["Red", "Green", "Violet"];
+    const numberOutcomes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const bigSmallOutcomes = ["Big", "Small"];
+
+    bets.forEach(bet => {
+        let winningOutcome;
+        switch (bet.game) {
+            case "Color":
+                winningOutcome = colorOutcomes[Math.floor(Math.random() * colorOutcomes.length)];
+                updateHistory("color-history", bet.option, winningOutcome);
+                break;
+            case "Number":
+                winningOutcome = numberOutcomes[Math.floor(Math.random() * numberOutcomes.length)];
+                updateHistory("number-history", bet.option, winningOutcome);
+                break;
+            case "BigSmall":
+                winningOutcome = bigSmallOutcomes[Math.floor(Math.random() * bigSmallOutcomes.length)];
+                updateHistory("bigsmall-history", bet.option, winningOutcome);
+                break;
+        }
+
+        if (bet.option === winningOutcome) {
+            const winnings = bet.amount * bet.multiplier;
+            balance += winnings;
+            alert(`You won ${winnings.toFixed(2)} for your ${bet.game} bet!`);
+        } else {
+            alert(`You lost your ${bet.game} bet.`);
+        }
+    });
+    updateBalance();
+}
+
+// Update balance display
+function updateBalance() {
+    document.getElementById("balance").innerText = balance.toFixed(2);
+}
+
+// Update result history
+function updateHistory(historyId, userBet, winningOutcome) {
+    const historyList = document.getElementById(historyId);
+    const resultItem = document.createElement("li");
+    resultItem.textContent = `Bet: ${userBet} | Result: ${winningOutcome}`;
+    historyList.appendChild(resultItem);
+}
+
+// Reset game for next round
+function resetGame() {
+    bets = [];
+    enableBetting();
     startTimer();
 }
 
-window.onload = () => {
-    startTimer();
-};
+// Deposit function
+function deposit() {
+    let depositAmount = prompt("Enter deposit amount:");
+    if (depositAmount && !isNaN(depositAmount)) {
+        balance += parseFloat(depositAmount);
+        updateBalance();
+    }
+}
+
+// Initialize game
+startTimer();

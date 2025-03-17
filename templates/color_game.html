@@ -3,223 +3,593 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Game Betting Interface</title>
+    <title>Color Game - XBet</title>
     <link rel="stylesheet" href="/static/css/color_game.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">XBet</div>
-        <div class="banner">Full range of services! Welcome to join~</div>
-        
-        <div class="tabs">
-            <div class="tab active">Win Go 30S</div>
-            <div class="tab">Win Go 1Min</div>
-            <div class="tab">Win Go 5Min</div>
-            <div class="tab">Win Go 10Min</div>
-        </div>
-        
+        <div class="header">XBet Color Game</div>
+
         <div class="timer">
-            <div>2411132259</div>
-            <div>Time remaining: <strong id="timer">30</strong>s</div>
+            <div>Game ID: <span id="game-id">2411132259</span></div>
+            <div class="timer-display">
+                <div class="timer-label">Next Result In:</div>
+                <div class="timer-value"><span id="timer">30</span>s</div>
+                <div class="timer-progress-bar">
+                    <div class="timer-progress" id="timer-progress"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Bet Options -->
         <div class="bet-options">
-            <div class="option red" onclick="placeBet('Color', 'Red', 1.97)">Red<br>1.97</div>
-            <div class="option green" onclick="placeBet('Color', 'Green', 1.97)">Green<br>1.97</div>
-            <div class="option violet" onclick="placeBet('Color', 'Violet', 4.5)">Violet<br>4.5</div>
-        </div>
-        <div class="number-options">
-            <div class="option" onclick="placeBet('Number', '0', 9)">0</div>
-            <div class="option" onclick="placeBet('Number', '1', 9)">1</div>
-            <div class="option" onclick="placeBet('Number', '2', 9)">2</div>
-            <div class="option" onclick="placeBet('Number', '3', 9)">3</div>
-            <div class="option" onclick="placeBet('Number', '4', 9)">4</div>
-            <div class="option" onclick="placeBet('Number', '5', 9)">5</div>
-            <div class="option" onclick="placeBet('Number', '6', 9)">6</div>
-            <div class="option" onclick="placeBet('Number', '7', 9)">7</div>
-            <div class="option" onclick="placeBet('Number', '8', 9)">8</div>
-            <div class="option" onclick="placeBet('Number', '9', 9)">9</div>
-        </div>
-        <div class="big-small-options">
-            <div class="option blue" onclick="placeBet('BigSmall', 'Big', 1.97)">Big 1.97</div>
-            <div class="option yellow" onclick="placeBet('BigSmall', 'Small', 1.97)">Small 1.97</div>
+            <div class="option red" data-type="Color" data-value="Red" data-multiplier="1.97">Red<br>1.97x</div>
+            <div class="option green" data-type="Color" data-value="Green" data-multiplier="1.97">Green<br>1.97x</div>
+            <div class="option violet" data-type="Color" data-value="Violet" data-multiplier="4.5">Violet<br>4.5x</div>
         </div>
 
-        <!-- Input Bet Amount -->
+        <div class="number-options">
+            <div class="option" data-type="Number" data-value="0" data-multiplier="9">0</div>
+            <div class="option" data-type="Number" data-value="1" data-multiplier="9">1</div>
+            <div class="option" data-type="Number" data-value="2" data-multiplier="9">2</div>
+            <div class="option" data-type="Number" data-value="3" data-multiplier="9">3</div>
+            <div class="option" data-type="Number" data-value="4" data-multiplier="9">4</div>
+            <div class="option" data-type="Number" data-value="5" data-multiplier="9">5</div>
+            <div class="option" data-type="Number" data-value="6" data-multiplier="9">6</div>
+            <div class="option" data-type="Number" data-value="7" data-multiplier="9">7</div>
+            <div class="option" data-type="Number" data-value="8" data-multiplier="9">8</div>
+            <div class="option" data-type="Number" data-value="9" data-multiplier="9">9</div>
+            
+        </div>
+
+        <div class="big-small-options">
+            <div class="option blue" data-type="BigSmall" data-value="Big" data-multiplier="1.97">Big 1.97x</div>
+            <div class="option yellow" data-type="BigSmall" data-value="Small" data-multiplier="1.97">Small 1.97x</div>
+        </div>
+
+        <!-- Bet Amount Section -->
         <div class="bet-amount">
-            <label for="betAmount">Enter Bet Amount: </label>
-            <input type="number" id="betAmount" min="1" step="0.01" placeholder="5.00" style="padding: 5px; border-radius: 10px; border: 2px solid salmon;">
-            <button onclick="confirmBet()" style="background-color: aqua; padding: 10px; border-radius: 10px;">Place Bet</button>
+            <div class="bet-info">
+                <div>
+                    <label for="betAmount">Bet Amount: </label>
+                    <input type="number" id="betAmount" min="10" step="10" value="10">
+                </div>
+                <div class="quick-amounts">
+                    <button class="quick-amount" data-amount="10">₹10</button>
+                    <button class="quick-amount" data-amount="50">₹50</button>
+                    <button class="quick-amount" data-amount="100">₹100</button>
+                    <button class="quick-amount" data-amount="500">₹500</button>
+                </div>
+            </div>
+            <div class="selected-bet-info" id="selected-bet-info">
+                <p>No bet selected</p>
+            </div>
+            <button id="placeBetButton" disabled>Place Bet</button>
+            <p class="balance-info">Balance: ₹<strong id="walletBalance">{{ balance }}</strong></p>
+        </div>
+
+        <!-- Result Display -->
+        <div class="result-display" id="result-display">
+            <h3>Last Result</h3>
+            <div class="result-content" id="result-content">
+                <p>Waiting for next result...</p>
+            </div>
         </div>
 
         <!-- Result History Sections -->
         <div class="game-history">
-            <h3>Color</h3> <br>
+            <h3>Recent Results</h3>
+            <div class="history-tabs">
+                <button class="tab-button active" data-tab="color">Color</button>
+                <button class="tab-button" data-tab="number">Number</button>
+                <button class="tab-button" data-tab="bigsmall">Big/Small</button>
+            </div>
+            <div class="tab-content active" id="color-tab">
             <ul id="color-history"></ul>
-            <h3>Number</h3> <br>
+            </div>
+            <div class="tab-content" id="number-tab">
             <ul id="number-history"></ul>
-            <h3>Big/Small</h3> <br>
+            </div>
+            <div class="tab-content" id="bigsmall-tab">
             <ul id="bigsmall-history"></ul>
+            </div>
         </div>
-
-        <div class="balance">
-            <span>Balance: <span id="balance">500.00</span></span>
-            <button onclick="deposit()">Deposit</button>
+           
+        <div class="navigation-links">
+            <a href="/home" class="nav-link">Back to Home</a>
         </div>
     </div>
-
+    
+    <!-- Result Modal -->
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Round Result</h2>
+            <div id="result-animation" class="result-animation"></div>
+            <div id="result-message"></div>
+            <div id="winnings-display"></div>
+            <button id="continue-button" class="continue-button">Continue</button>
+        </div>
+    </div>
+    
     <script>
-        let balance = 500.00;
-        let countdown = 30;
-        let timerInterval;
-        let bets = []; // Array to store multiple bets
-
-        // Start countdown timer
-        function startTimer() {
-            countdown = 30;
-            document.getElementById("timer").innerText = countdown;
-            timerInterval = setInterval(() => {
-                countdown--;
-                document.getElementById("timer").innerText = countdown;
-                if (countdown === 5) disableBetting();
-                if (countdown <= 0) {
-                    clearInterval(timerInterval);
-                    evaluateBets();
-                    resetGame();
-                }
-            }, 1000);
-        }
-
-        // Place a bet selection
-        function placeBet(game, option, multiplier) {
-            if (countdown <= 5) {
-                alert("Betting is disabled in the last 5 seconds!");
-                return;
-            }
-
-            const betAmount = parseFloat(document.getElementById("betAmount").value);
-            if (isNaN(betAmount) || betAmount <= 0) {
-                alert("Please enter a valid bet amount!");
-                return;
-            }
-            if (betAmount > balance) {
-                alert("Insufficient balance!");
-                return;
-            }
-
-            // Store the bet in the bets array
-            const bet = { game, option, multiplier, amount: betAmount };
-            bets.push(bet);
-            alert(`You selected ${game} - ${option} with multiplier ${multiplier} and bet amount ${betAmount.toFixed(2)}`);
-        }
-
-        // Confirm placing bets
-        function confirmBet() {
-            if (bets.length === 0) {
-                alert("Please place at least one bet.");
-                return;
-            }
-
-            // Deduct the total amount of all placed bets from the balance
-            let totalBetAmount = 0;
-            bets.forEach(bet => totalBetAmount += bet.amount);
-            if (totalBetAmount > balance) {
-                alert("Insufficient balance to place all bets!");
-                return;
-            }
-
-            balance -= totalBetAmount;
-            updateBalance();
-            alert(`You placed ${bets.length} bets for a total of ${totalBetAmount.toFixed(2)}`);
-        }
-
-        // Disable betting in the last 5 seconds
-        function disableBetting() {
-            document.querySelectorAll(".option").forEach(option => {
-                option.style.pointerEvents = "none";
-                option.style.opacity = "0.5";
+  document.addEventListener("DOMContentLoaded", function () {
+            // Elements
+            const timerElement = document.getElementById("timer");
+            const gameIdElement = document.getElementById("game-id");
+            const betAmountInput = document.getElementById("betAmount");
+            const placeBetButton = document.getElementById("placeBetButton");
+            const walletBalanceElement = document.getElementById("walletBalance");
+            const selectedBetInfoElement = document.getElementById("selected-bet-info");
+            const resultDisplayElement = document.getElementById("result-display");
+            const resultContentElement = document.getElementById("result-content");
+            const colorHistoryElement = document.getElementById("color-history");
+            const numberHistoryElement = document.getElementById("number-history");
+            const bigSmallHistoryElement = document.getElementById("bigsmall-history");
+            const resultModal = document.getElementById("result-modal");
+            const closeButton = document.querySelector(".close-button");
+            const continueButton = document.getElementById("continue-button");
+            const resultAnimationElement = document.getElementById("result-animation");
+            const resultMessageElement = document.getElementById("result-message");
+            const winningsDisplayElement = document.getElementById("winnings-display");
+            
+            // Game state
+    let timerValue = 30;
+    let timerInterval;
+    let selectedBet = null;
+            let gameId = generateGameId();
+            let lastSyncTime = Date.now();
+            
+            // Initialize
+            gameIdElement.textContent = gameId;
+            syncWithServerTimer();
+            fetchBetHistory();
+            
+            // Set up periodic sync with server
+            setInterval(syncWithServerTimer, 1000);
+            
+            // Quick amount buttons
+            document.querySelectorAll('.quick-amount').forEach(button => {
+                button.addEventListener('click', function() {
+                    betAmountInput.value = this.dataset.amount;
+                });
             });
-        }
-
-        // Enable betting
-        function enableBetting() {
-            document.querySelectorAll(".option").forEach(option => {
-                option.style.pointerEvents = "auto";
-                option.style.opacity = "1";
+            
+            // Tab switching
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
+                });
             });
-        }
 
-        // Evaluate the results of all placed bets
-        function evaluateBets() {
-            if (bets.length === 0) {
-                alert("No bets placed.");
-                return;
-            }
-
-            const colorOutcomes = ["Red", "Green", "Violet"];
-            const numberOutcomes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-            const bigSmallOutcomes = ["Big", "Small"];
-
-            bets.forEach(bet => {
-                let winningOutcome;
-                switch (bet.game) {
-                    case "Color":
-                        winningOutcome = colorOutcomes[Math.floor(Math.random() * colorOutcomes.length)];
-                        updateHistory("color-history", bet.option, winningOutcome);
-                        break;
-                    case "Number":
-                        winningOutcome = numberOutcomes[Math.floor(Math.random() * numberOutcomes.length)];
-                        updateHistory("number-history", bet.option, winningOutcome);
-                        break;
-                    case "BigSmall":
-                        winningOutcome = bigSmallOutcomes[Math.floor(Math.random() * bigSmallOutcomes.length)];
-                        updateHistory("bigsmall-history", bet.option, winningOutcome);
-                        break;
-                }
-
-                if (bet.option === winningOutcome) {
-                    const winnings = bet.amount * bet.multiplier;
-                    balance += winnings;
-                    alert(`You won ${winnings.toFixed(2)} for your ${bet.game} bet!`);
+            function updateTimerDisplay() {
+                // Calculate time since last sync
+                const timeSinceSync = Math.floor((Date.now() - lastSyncTime) / 1000);
+                const adjustedTimer = Math.max(0, timerValue - timeSinceSync);
+                
+                timerElement.textContent = adjustedTimer;
+                const progressPercent = (adjustedTimer / 30) * 100;
+                document.getElementById('timer-progress').style.width = `${progressPercent}%`;
+                
+                if (adjustedTimer <= 5) {
+                    document.getElementById('timer-progress').classList.add('urgent');
+                    timerElement.classList.add('urgent');
                 } else {
-                    alert(`You lost your ${bet.game} bet.`);
+                    document.getElementById('timer-progress').classList.remove('urgent');
+                    timerElement.classList.remove('urgent');
+                }
+            }
+            
+            function disableBetting() {
+                document.querySelectorAll('.option').forEach(btn => {
+                    btn.classList.add('disabled');
+                });
+                placeBetButton.disabled = true;
+                betAmountInput.disabled = true;
+            }
+
+            function enableBetting() {
+                if (timerValue <= 5) return;  // Don't enable if timer is below 5 seconds
+                
+                document.querySelectorAll('.option').forEach(btn => {
+                    btn.classList.remove('disabled');
+                    btn.classList.remove('selected');
+                });
+                placeBetButton.disabled = !selectedBet;
+                betAmountInput.disabled = false;
+                selectedBet = null;
+                selectedBetInfoElement.innerHTML = '<p>No bet selected</p>';
+            }
+
+            function generateGameId() {
+                return Math.floor(Math.random() * 9000000000) + 1000000000;
+            }
+
+            function startTimer() {
+                // Instead of starting a new timer, sync with server timer
+                syncWithServerTimer();
+                
+                // Set up interval to sync with server every second
+                timerInterval = setInterval(() => {
+                    if (timerValue > 0) {
+                        timerValue--;
+                        updateTimerDisplay();
+                    }
+                    
+                    if (timerValue === 5) {
+                        disableBetting();
+                    }
+                    
+            if (timerValue === 0) {
+                clearInterval(timerInterval);
+                        generateResult();
+            }
+        }, 1000);
+    }
+
+            function syncWithServerTimer() {
+                fetch('/color_game/get_state')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update game ID
+                            gameId = data.game_id;
+                            gameIdElement.textContent = gameId;
+                            
+                            // Update timer
+                            timerValue = data.remaining_time;
+                            lastSyncTime = Date.now();
+                            updateTimerDisplay();
+                            
+                            // If timer is at or below 5 seconds, disable betting
+                            if (timerValue <= 5) {
+                                disableBetting();
+                            } else {
+                                enableBetting();
+                            }
+                            
+                            // If timer is 0 and results are available, show them
+                            if (timerValue === 0 && data.results) {
+                                showServerResults(data.results);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error syncing with server:", error);
+                    });
+            }
+
+            function showServerResults(results) {
+                // Display result
+                resultContentElement.innerHTML = `
+                    <div class="result-item">
+                        <span class="result-label">Color:</span>
+                        <span class="result-value ${results.color.toLowerCase()}">${results.color}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Number:</span>
+                        <span class="result-value">${results.number}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Type:</span>
+                        <span class="result-value">${results.bigSmall}</span>
+                    </div>
+                `;
+                
+                // Update history
+                updateHistory("Color", results.color, 0, "");
+                updateHistory("Number", results.number, 0, "");
+                updateHistory("BigSmall", results.bigSmall, 0, "");
+                
+                // Check if there's a pending bet and show result
+                const pendingBet = localStorage.getItem('pendingBet');
+                if (pendingBet) {
+                    const bet = JSON.parse(pendingBet);
+                    // Show result modal after a short delay
+                    setTimeout(() => {
+                        showResultModal(bet.result, bet.winning_value, bet);
+                        // Clear pending bet
+                        localStorage.removeItem('pendingBet');
+                    }, 1000);
+                }
+            }
+
+            function generateResult() {
+                // Fetch result from server
+                fetch('/color_game/get_result')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showServerResults(data.results);
+                            
+                            // Reset for next round
+                            setTimeout(() => {
+                                syncWithServerTimer();
+                                enableBetting();
+                            }, 3000);
+                        } else {
+                            console.error("Error fetching result:", data.error);
+                            // Fallback to local generation if server fails
+                            fallbackGenerateResult();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching result:", error);
+                        // Fallback to local generation if server fails
+                        fallbackGenerateResult();
+                    });
+            }
+
+            function fallbackGenerateResult() {
+                // Fallback local generation (same as before)
+                const colorOptions = ["Red", "Green", "Violet"];
+                const numberOptions = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+                const bigSmallOptions = ["Big", "Small"];
+                
+                const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+                const number = numberOptions[Math.floor(Math.random() * numberOptions.length)];
+                const bigSmall = bigSmallOptions[Math.floor(Math.random() * bigSmallOptions.length)];
+                
+                // Display result
+                resultContentElement.innerHTML = `
+                    <div class="result-item">
+                        <span class="result-label">Color:</span>
+                        <span class="result-value ${color.toLowerCase()}">${color}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Number:</span>
+                        <span class="result-value">${number}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Type:</span>
+                        <span class="result-value">${bigSmall}</span>
+                    </div>
+                `;
+                
+                // Update history
+                updateHistory("Color", color, 0, "");
+                updateHistory("Number", number, 0, "");
+                updateHistory("BigSmall", bigSmall, 0, "");
+                
+                // Reset for next round
+                setTimeout(enableBetting, 3000);
+            }
+
+            // Bet selection
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener("click", function() {
+                    if (this.classList.contains('disabled')) return;  // Don't allow if disabled
+                    
+                    // Remove selected class from all options of the same type
+                    document.querySelectorAll(`.option[data-type="${this.dataset.type}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Store selected bet
+                    selectedBet = {
+                        type: this.dataset.type,
+                        value: this.dataset.value,
+                        multiplier: parseFloat(this.dataset.multiplier)
+                    };
+                    
+                    // Update selected bet info
+                    selectedBetInfoElement.innerHTML = `
+                        <p>Selected: <strong>${selectedBet.type} - ${selectedBet.value}</strong></p>
+                        <p>Multiplier: <strong>${selectedBet.multiplier}x</strong></p>
+                    `;
+                    
+                    // Enable place bet button if bet amount is valid
+                    const betAmount = parseFloat(betAmountInput.value);
+                    placeBetButton.disabled = isNaN(betAmount) || betAmount < 10;
+                });
+            });
+
+            // Update place bet button state when bet amount changes
+            betAmountInput.addEventListener("input", function() {
+                const betAmount = parseFloat(this.value);
+                placeBetButton.disabled = !selectedBet || isNaN(betAmount) || betAmount < 10;
+            });
+
+            // Place bet
+            placeBetButton.addEventListener("click", function() {
+                if (!selectedBet) {
+                    alert("Please select a bet option first!");
+                    return;
+                }
+                
+                const betAmount = parseFloat(betAmountInput.value);
+                if (isNaN(betAmount) || betAmount < 10) {
+                    alert("Please enter a valid bet amount (minimum ₹10)");
+                    return;
+                }
+                
+                const walletBalance = parseFloat(walletBalanceElement.textContent);
+                if (betAmount > walletBalance) {
+                    alert("Insufficient balance!");
+                    return;
+                }
+
+                // Add bet amount to selected bet
+                selectedBet.betAmount = betAmount;
+                
+                // Disable betting during processing
+                disableBetting();
+                placeBetButton.disabled = true;
+                
+                // Send bet to server
+                fetch('/color_game/place_bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(selectedBet)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update wallet balance
+                        walletBalanceElement.textContent = data.new_balance.toFixed(2);
+                        
+                        // Show bet confirmation message
+                        alert("Bet placed successfully! Wait for the timer to end to see the result.");
+                        
+                        // Store bet data to show result when timer ends
+                        localStorage.setItem('pendingBet', JSON.stringify({
+                            type: selectedBet.type,
+                            value: selectedBet.value,
+                            amount: selectedBet.betAmount,
+                            multiplier: selectedBet.multiplier,
+                            result: data.result,
+                            winning_value: data.winning_value
+                        }));
+                        
+                        // Reset selection
+                        document.querySelectorAll('.option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        selectedBet = null;
+                        selectedBetInfoElement.innerHTML = '<p>No bet selected</p>';
+                        placeBetButton.disabled = true;
+                    } else {
+                        alert("Bet failed: " + data.error);
+                        enableBetting();  // Re-enable betting if failed
+                    }
+                })
+                .catch(error => {
+                    console.error("Error placing bet:", error);
+                    alert("Error placing bet. Please try again.");
+                    enableBetting();  // Re-enable betting if error
+                });
+            });
+
+            function showResultModal(result, winningValue, bet) {
+                // Set result animation
+                let animationHTML = '';
+                if (bet.type === "Color") {
+                    animationHTML = `<div class="big-result-circle ${winningValue.toLowerCase()}">${winningValue}</div>`;
+                } else if (bet.type === "Number") {
+                    animationHTML = `<div class="big-result-number">${winningValue}</div>`;
+                } else if (bet.type === "BigSmall") {
+                    animationHTML = `<div class="big-result-text">${winningValue}</div>`;
+                }
+                resultAnimationElement.innerHTML = animationHTML;
+                
+                // Set result message
+                if (result === "win") {
+                    resultMessageElement.innerHTML = `<p class="win-message">You Won!</p>`;
+                    const winnings = bet.amount * bet.multiplier;
+                    winningsDisplayElement.innerHTML = `<p class="winnings">+₹${winnings.toFixed(2)}</p>`;
+                } else {
+                    resultMessageElement.innerHTML = `<p class="lose-message">Better luck next time!</p>`;
+                    winningsDisplayElement.innerHTML = `<p class="loss">-₹${bet.amount}</p>`;
+                }
+                
+                // Show modal
+                resultModal.style.display = "block";
+            }
+
+            // Close modal
+            closeButton.addEventListener("click", function() {
+                resultModal.style.display = "none";
+            });
+            
+            continueButton.addEventListener("click", function() {
+                resultModal.style.display = "none";
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener("click", function(event) {
+                if (event.target === resultModal) {
+                    resultModal.style.display = "none";
                 }
             });
-            updateBalance();
+
+            function updateHistory(type, value, amount, result) {
+        let historyElement;
+        if (type === "Color") {
+                    historyElement = colorHistoryElement;
+        } else if (type === "Number") {
+                    historyElement = numberHistoryElement;
+        } else if (type === "BigSmall") {
+                    historyElement = bigSmallHistoryElement;
         }
 
-        // Update balance display
-        function updateBalance() {
-            document.getElementById("balance").innerText = balance.toFixed(2);
+        if (historyElement) {
+            const newEntry = document.createElement("li");
+                    
+                    if (amount > 0) {
+                        // This is a bet result
+                        const resultClass = result === "win" ? "win" : "lose";
+                        newEntry.innerHTML = `
+                            <span class="${value.toLowerCase()}">${value}</span>
+                            <span>₹${amount}</span>
+                            <span class="${resultClass}">${result.toUpperCase()}</span>
+                        `;
+                        newEntry.classList.add(resultClass);
+                    } else {
+                        // This is just a game result
+                        newEntry.innerHTML = `<span class="${value.toLowerCase()}">${value}</span>`;
+                    }
+                    
+            historyElement.prepend(newEntry);
+                    
+                    // Limit history to 10 items
+                    if (historyElement.children.length > 10) {
+                        historyElement.removeChild(historyElement.lastChild);
+                    }
         }
+    }
 
-        // Update result history
-        function updateHistory(historyId, userBet, winningOutcome) {
-            const historyList = document.getElementById(historyId);
-            const resultItem = document.createElement("li");
-            resultItem.textContent = `Bet: ${userBet} | Result: ${winningOutcome}`;
-            historyList.appendChild(resultItem);
-        }
+    function fetchBetHistory() {
+                fetch('/color_game/history')
+        .then(response => response.json())
+        .then(data => {
+                        if (data.success && data.history) {
+                // Clear previous history
+                            colorHistoryElement.innerHTML = "";
+                            numberHistoryElement.innerHTML = "";
+                            bigSmallHistoryElement.innerHTML = "";
 
-        // Reset game for next round
-        function resetGame() {
-            bets = [];
-            enableBetting();
-            startTimer();
-        }
+                            // Group history by type
+                            const colorHistory = data.history.filter(bet => bet.type === "Color");
+                            const numberHistory = data.history.filter(bet => bet.type === "Number");
+                            const bigSmallHistory = data.history.filter(bet => bet.type === "BigSmall");
 
-        // Deposit function
-        function deposit() {
-            let depositAmount = prompt("Enter deposit amount:");
-            if (depositAmount && !isNaN(depositAmount)) {
-                balance += parseFloat(depositAmount);
-                updateBalance();
+                            // Update history displays
+                            colorHistory.forEach(bet => {
+                                updateHistory("Color", bet.value, bet.amount, bet.result);
+                            });
+                            
+                            numberHistory.forEach(bet => {
+                                updateHistory("Number", bet.value, bet.amount, bet.result);
+                            });
+                            
+                            bigSmallHistory.forEach(bet => {
+                                updateHistory("BigSmall", bet.value, bet.amount, bet.result);
+                });
             }
-        }
-
-        // Initialize game
-        startTimer();
+        })
+                    .catch(error => {
+                        console.error("Error fetching history:", error);
+                    });
+            }
+        });
     </script>
 </body>
 </html>
+
+
+
+
+

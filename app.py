@@ -17,7 +17,7 @@ from sqlalchemy import func
 razorpay_client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET))
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://u483781610_yaswantpandey:Iamluciferhackerfrommankapur7398731184@mysql-79828-0.cloudclusters.net:3306/u483781610_xbetin'  # MySQL database connection
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:ZzxLIsWgwxxLhUUiVCaAAIfHPsInegqs@shuttle.proxy.rlwy.net:43495/railway'  # MySQL database connection
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 

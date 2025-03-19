@@ -12,3 +12,4 @@ SQLAlchemy
 requests
 psycopg2-binary
 mysqlclient
+mysql-connector-python
